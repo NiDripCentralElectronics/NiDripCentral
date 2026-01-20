@@ -55,11 +55,12 @@ app.get("/api/health", (req, res) => {
 // ==================================================
 // Import Routes
 // ==================================================
+const superAdminRoute = require("./routes/super-admin-route/super-admin.route");
 
 // ==================================================
 // API Routes
 // ==================================================
-
+app.use("/api/super-admin", superAdminRoute);
 
 // ==================================================
 // MongoDB Connection + Server Start
@@ -74,7 +75,7 @@ mongoose
   .then(() => {
     console.log("Connected to MongoDB Successfully");
     app.listen(PORT, () => {
-      console.log(`Oloha API Running Securely on PORT ${PORT}`);
+      console.log(`NiDrip API Running Securely on PORT ${PORT}`);
     });
   })
   .catch((err) => {

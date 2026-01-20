@@ -13,6 +13,7 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const rateLimit = require("express-rate-limit");
+const SuperAdmin = require("../../models/super-admin-model/super-admin.model");
 
 // ------------------------------------------------------------------
 // ENVIRONMENT VALIDATION
@@ -106,11 +107,11 @@ exports.encryptedAuthMiddleware = async (req, res, next) => {
 
     if (header?.startsWith("Bearer ")) {
       encryptedPayload = JSON.parse(
-        Buffer.from(header.split(" ")[1], "base64url").toString()
+        Buffer.from(header.split(" ")[1], "base64url").toString(),
       );
     } else if (req.cookies?.accessToken) {
       encryptedPayload = JSON.parse(
-        Buffer.from(req.cookies.accessToken, "base64url").toString()
+        Buffer.from(req.cookies.accessToken, "base64url").toString(),
       );
     }
 
@@ -141,25 +142,17 @@ exports.encryptedAuthMiddleware = async (req, res, next) => {
     }
 
     // Resolve model based on role
-    // let Model;
-    // switch (decoded.role) {
-    //   case "SUPERADMIN":
-    //     Model = SuperAdmin;
-    //     break;
+    let Model;
+    switch (decoded.role) {
+      case "SUPERADMIN":
+        Model = SuperAdmin;
+        break;
 
-    //   case "AGENCY":
-    //     Model = Agency;
-    //     break;
-
-    //   case "USER":
-    //     Model = User;
-    //     break;
-
-    //   default:
-    //     return res
-    //       .status(401)
-    //       .json({ success: false, message: "Invalid role" });
-    // }
+      default:
+        return res
+          .status(401)
+          .json({ success: false, message: "Invalid role" });
+    }
 
     const user = await Model.findById(decoded.user.id).select("-password -__v");
     if (!user)
