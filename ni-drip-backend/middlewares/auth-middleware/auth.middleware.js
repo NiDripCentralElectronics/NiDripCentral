@@ -14,6 +14,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const rateLimit = require("express-rate-limit");
 const SuperAdmin = require("../../models/super-admin-model/super-admin.model");
+const User = require("../../models/user-model/user.model");
 
 // ------------------------------------------------------------------
 // ENVIRONMENT VALIDATION
@@ -146,6 +147,10 @@ exports.encryptedAuthMiddleware = async (req, res, next) => {
     switch (decoded.role) {
       case "SUPERADMIN":
         Model = SuperAdmin;
+        break;
+
+      case "USER":
+        Model = User;
         break;
 
       default:

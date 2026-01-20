@@ -57,12 +57,20 @@ app.get("/api/health", (req, res) => {
 // ==================================================
 const superAdminRoute = require("./routes/super-admin-route/super-admin.route");
 const sharedPasswordResetRoute = require("./routes/shared-route/shared-password.reset.route");
+const productRoute = require("./routes/product-route/product.route");
+const userRoute = require("./routes/user-route/user.route");
+const cartRoute = require("./routes/cart-route/cart.route");
+const favoriteRoute = require("./routes/favorite-route/favorite.route");
 
 // ==================================================
 // API Routes
 // ==================================================
 app.use("/api/super-admin", superAdminRoute);
 app.use("/api/password", sharedPasswordResetRoute);
+app.use("/api/product", productRoute);
+app.use("/api/user", userRoute);
+app.use("/api/cart", cartRoute);
+app.use("/api/favorite", favoriteRoute);
 
 // ==================================================
 // MongoDB Connection + Server Start

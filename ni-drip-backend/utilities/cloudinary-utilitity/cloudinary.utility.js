@@ -67,7 +67,10 @@ exports.upload = multer({
   storage,
   fileFilter,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB limit
-}).fields([{ name: "profilePicture", maxCount: 1 }]);
+}).fields([
+  { name: "profilePicture", maxCount: 1 },
+  { name: "productImage", maxCount: 5 },
+]);
 
 // ---------------------------------------------------------------------------
 // FOLDER ROUTING
@@ -79,6 +82,8 @@ const getFolderForUploadType = (type) => {
   switch (type) {
     case "profilePicture":
       return `${base}/profilePictures`;
+    case "productImage":
+      return `${base}/productImage`;
     default:
       throw new Error(`Unsupported upload type: ${type}`);
   }
@@ -138,23 +143,44 @@ exports.uploadToCloudinary = async (file, type, existingPublicId = null) => {
 // ---------------------------------------------------------------------------
 
 exports.deleteFromCloudinary = async (fileUrl) => {
+  if (!fileUrl) return;
+
   try {
-    if (!fileUrl) return;
-
     const url = new URL(fileUrl);
-    const parts = url.pathname.split("/");
-    const uploadIndex = parts.indexOf("upload");
 
+    // Remove protocol, domain, /image/upload/ and version folder
+    const pathParts = url.pathname.split("/").filter(Boolean);
+
+    // Find where 'upload' is, then take everything after it + version
+    const uploadIndex = pathParts.indexOf("upload");
     if (uploadIndex === -1) return;
 
-    let publicId = parts.slice(uploadIndex + 2).join("/");
-    publicId = publicId.substring(0, publicId.lastIndexOf("."));
+    // From version folder onward
+    const afterUpload = pathParts.slice(uploadIndex + 1);
+
+    // Remove version folder (v123456...) if exists
+    let startIndex = 0;
+    if (afterUpload[0]?.startsWith("v") && !afterUpload[0].includes(".")) {
+      startIndex = 1;
+    }
+
+    // Now join the rest
+    let publicId = afterUpload.slice(startIndex).join("/");
+
+    // Remove extension(s) — remove everything after last dot
+    if (publicId.includes(".")) {
+      publicId = publicId.substring(0, publicId.lastIndexOf("."));
+    }    
+
+    console.log("Attempting to delete public_id:", publicId);
 
     await cloudinary.uploader.destroy(publicId, {
       resource_type: "image",
       invalidate: true,
     });
+
+    console.log("Deleted:", publicId);
   } catch (err) {
-    console.error("Cloudinary Deletion Error:", err);
+    console.error("Cloudinary Deletion Error:", err.message);
   }
 };
