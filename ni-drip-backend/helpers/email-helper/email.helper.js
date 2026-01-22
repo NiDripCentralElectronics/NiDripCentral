@@ -207,8 +207,84 @@ const sendPasswordResetEmail = async (toEmail, resetToken, role) => {
   });
 };
 
+// ────────────────────────────────────────────────────────────────
+//   Email Helpers (can be moved to a separate file later)
+// ────────────────────────────────────────────────────────────────
+
+/**
+ * Send confirmation email to the user who created the ticket
+ */
+const sendTicketConfirmationToUser = async (userEmail, userName, ticket) => {
+  const content = `
+    <h2 style="color:#E32264;">Hello ${userName},</h2>
+    <p>Thank you for reaching out to NIDRIP Support.</p>
+    <p>Your ticket has been received successfully.</p>
+    
+    <div style="background:#f8f9fa; padding:20px; border-radius:8px; margin:20px 0;">
+      <strong>Ticket ID:</strong> ${ticket._id}<br>
+      <strong>Subject:</strong> ${ticket.subject}<br>
+      <strong>Priority:</strong> ${ticket.priority}<br>
+      <strong>Submitted on:</strong> ${new Date(ticket.createdAt).toLocaleString()}
+    </div>
+    
+    <p>Our team will review your request as soon as possible and get back to you.</p>
+    <p style="color:#666; font-size:14px;">
+      You can check the status anytime in your <strong>My Tickets</strong> section.
+    </p>
+    
+    <p style="margin-top:30px;">Thank you,<br>
+      <strong>NIDRIP Support Team</strong></p>
+  `;
+
+  await sendEmail({
+    to: userEmail,
+    subject: `NIDRIP Support: Ticket Received [#${ticket._id}]`,
+    html: getEmailTemplate(content, "Support Ticket Confirmation"),
+  });
+};
+
+/**
+ * Send notification to Super Admin when a new ticket is created
+ */
+const sendNewTicketNotificationToAdmin = async (ticket) => {
+  const adminEmail = process.env.EMAIL_USER || "Null";
+
+  const content = `
+    <h2 style="color:#E32264;">New Support Ticket Created</h2>
+    
+    <p>A user has submitted a new support request.</p>
+    
+    <div style="background:#f8f9fa; padding:20px; border-radius:8px; margin:20px 0;">
+      <strong>Ticket ID:</strong> ${ticket._id}<br>
+      <strong>User:</strong> ${ticket.user.userName} (${ticket.user.email})<br>
+      <strong>Subject:</strong> ${ticket.subject}<br>
+      <strong>Priority:</strong> ${ticket.priority}<br>
+      <strong>Submitted:</strong> ${new Date(ticket.createdAt).toLocaleString()}
+    </div>
+    
+    <p style="margin:20px 0;">
+      <a href="${process.env.FRONTEND_URL}/super-admin/tickets/${ticket._id}"
+         class="btn-primary" style="color:#000 !important;">
+        View & Respond to Ticket
+      </a>
+    </p>
+    
+    <p style="color:#666; font-size:14px;">
+      Please review this ticket at your earliest convenience.
+    </p>
+  `;
+
+  await sendEmail({
+    to: adminEmail,
+    subject: `New Support Ticket [#${ticket._id}] - ${ticket.priority} Priority`,
+    html: getEmailTemplate(content, "New Support Ticket Notification"),
+  });
+};
+
 module.exports = {
   sendEmail,
   getEmailTemplate,
   sendPasswordResetEmail,
+  sendTicketConfirmationToUser,
+  sendNewTicketNotificationToAdmin,
 };

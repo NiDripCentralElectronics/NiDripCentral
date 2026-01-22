@@ -56,13 +56,4 @@ router.delete(
   productController.deleteProduct,
 );
 
-/**
- * @desc Rate a product
- */
-router.post(
-  "/rate-product/:productId",
-  encryptedAuthMiddleware,
-  productController.rateProduct,
-);
-
 module.exports = router;

@@ -61,6 +61,8 @@ const productRoute = require("./routes/product-route/product.route");
 const userRoute = require("./routes/user-route/user.route");
 const cartRoute = require("./routes/cart-route/cart.route");
 const favoriteRoute = require("./routes/favorite-route/favorite.route");
+const ratingRoute = require("./routes/rating-route/rating.route");
+const reviewRoute = require("./routes/review-route/review.route");
 
 // ==================================================
 // API Routes
@@ -71,6 +73,9 @@ app.use("/api/product", productRoute);
 app.use("/api/user", userRoute);
 app.use("/api/cart", cartRoute);
 app.use("/api/favorite", favoriteRoute);
+app.use("/api/rating", ratingRoute);
+app.use("/api/review", reviewRoute);
+
 
 // ==================================================
 // MongoDB Connection + Server Start

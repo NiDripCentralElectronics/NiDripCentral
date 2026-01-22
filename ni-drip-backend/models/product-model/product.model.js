@@ -27,6 +27,29 @@ const ratingSchema = new mongoose.Schema(
 );
 
 /**
+ * Sub-schema for product review
+ */
+const reviewSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Customer model
+      required: true,
+    },
+
+    /**
+     * text review/message from the user
+     */
+    reviewText: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+  },
+  { _id: false },
+);
+
+/**
  * @schema ProductSchema
  * @description Schema representing a Product with:
  * - Visual assets (Image)
@@ -125,6 +148,21 @@ const productSchema = new mongoose.Schema(
     },
 
     totalRatings: {
+      type: Number,
+      default: 0,
+    },
+
+    /**
+     * Review Section
+     */
+    reviews: [reviewSchema],
+
+    averageReview: {
+      type: Number,
+      default: 0,
+    },
+
+    totalReviews: {
       type: Number,
       default: 0,
     },
