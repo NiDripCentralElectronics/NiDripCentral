@@ -281,10 +281,52 @@ const sendNewTicketNotificationToAdmin = async (ticket) => {
   });
 };
 
+/**
+ * Send email notification to user when ticket status is updated 
+ */
+async function sendTicketStatusUpdateEmail(
+  userEmail,
+  userName,
+  ticketId,
+  newStatus,
+  subject,
+) {
+  const content = `
+    <h2 style="color:#E32264;">Ticket Status Update</h2>
+    
+    <p>Hello ${userName},</p>
+    
+    <p>Your support ticket has been updated by our team.</p>
+    
+    <div style="background:#f8f9fa; padding:20px; border-radius:8px; margin:20px 0;">
+      <strong>Ticket ID:</strong> ${ticketId}<br>
+      <strong>Subject:</strong> ${subject}<br>
+      <strong>New Status:</strong> <strong style="color:#E32264;">${newStatus}</strong><br>
+      <strong>Updated on:</strong> ${new Date().toLocaleString()}
+    </div>
+    
+    <p>You can view the latest status in your <strong>My Tickets</strong> section.</p>
+    
+    <p style="margin-top:30px;">Thank you for your patience,<br>
+      <strong>NIDRIP Support Team</strong></p>
+  `;
+
+  await sendEmail({
+    to: userEmail,
+    subject: `NIDRIP Support: Ticket [#${ticketId}] Status Updated to ${newStatus}`,
+    html: getEmailTemplate(content, "Ticket Status Update"),
+  });
+
+  console.log(
+    `Status update email sent to ${userEmail} for ticket ${ticketId}`,
+  );
+}
+
 module.exports = {
   sendEmail,
   getEmailTemplate,
   sendPasswordResetEmail,
   sendTicketConfirmationToUser,
   sendNewTicketNotificationToAdmin,
+  sendTicketStatusUpdateEmail
 };

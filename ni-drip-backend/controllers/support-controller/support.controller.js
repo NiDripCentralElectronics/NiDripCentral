@@ -16,6 +16,7 @@ const Support = require("../../models/support-model/support.model");
 const {
   sendTicketConfirmationToUser,
   sendNewTicketNotificationToAdmin,
+  sendTicketStatusUpdateEmail
 } = require("../../helpers/email-helper/email.helper");
 
 /**
@@ -260,6 +261,96 @@ exports.deleteTicket = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error",
+    });
+  }
+};
+
+// ------------------------------- TICKET ACTIONS -------------------------------
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+
+/**
+ * Update ticket status (SuperAdmin only)
+ * PATCH /api/support/action/update-ticket-status/:ticketId
+ * Private access - SuperAdmin only
+ *
+ * @async
+ * @param {import('express').Request} req - Express request object
+ * @param {import('express').Response} res - Express response object
+ * @returns {Promise<void>}
+ */
+exports.updateTicketStatus = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    const { status } = req.body;
+
+    // Only allow SUPERADMIN to update status
+    const isAdmin = req.user.role === "SUPERADMIN";
+    if (!isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "Only admins can update ticket status",
+      });
+    }
+
+    // Validate status
+    const validStatuses = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"];
+    if (!status || !validStatuses.includes(status.toUpperCase())) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
+      });
+    }
+
+    const normalizedStatus = status.toUpperCase();
+
+    // Find ticket
+    const ticket = await Support.findById(ticketId).populate(
+      "user",
+      "userName email",
+    );
+
+    if (!ticket) {
+      return res.status(404).json({
+        success: false,
+        message: "Ticket not found",
+      });
+    }
+
+    // Prevent unnecessary updates
+    if (ticket.status === normalizedStatus) {
+      return res.status(200).json({
+        success: true,
+        message: `Ticket is already in ${normalizedStatus} status`,
+        ticket,
+      });
+    }
+
+    // Update status
+    ticket.status = normalizedStatus;
+    await ticket.save();
+
+    // Send email notification to the user
+    await sendTicketStatusUpdateEmail(
+      ticket.user.email,
+      ticket.user.userName,
+      ticket._id,
+      normalizedStatus,
+      ticket.subject,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Ticket status updated to ${normalizedStatus}`,
+      ticket,
+    });
+  } catch (error) {
+    console.error("Update ticket status error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
     });
   }
 };
