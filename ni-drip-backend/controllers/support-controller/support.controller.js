@@ -38,14 +38,7 @@ exports.createTicket = async (req, res) => {
         success: false,
         message: "Subject and description are required",
       });
-    }
-
-    if (description.length < 200) {
-      return res.status(400).json({
-        success: false,
-        message: "Description must be at least 200 characters",
-      });
-    }
+    }  
 
     const ticket = await Support.create({
       user: userId,
