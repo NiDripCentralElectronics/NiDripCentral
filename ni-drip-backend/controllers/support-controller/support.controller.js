@@ -16,7 +16,7 @@ const Support = require("../../models/support-model/support.model");
 const {
   sendTicketConfirmationToUser,
   sendNewTicketNotificationToAdmin,
-  sendTicketStatusUpdateEmail
+  sendTicketStatusUpdateEmail,
 } = require("../../helpers/email-helper/email.helper");
 
 /**
@@ -68,40 +68,7 @@ exports.createTicket = async (req, res) => {
       success: true,
       message:
         "Ticket generated successfully. You will receive a confirmation email shortly.",
-      ticket,
-    });
-  } catch (error) {
-    console.error("Create ticket error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server error ",
-      error: error.message,
-    });
-  }
-};
-
-/**
- * Get all support tickets created by the authenticated user
- * GET /api/support/get-my-tickets
- * Private access
- *
- * @async
- * @param {import('express').Request} req - Express request object
- * @param {import('express').Response} res - Express response object
- * @returns {Promise<void>}
- */
-exports.getMyTickets = async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    const tickets = await Support.find({ user: userId })
-      .sort({ createdAt: -1 }) // newest first
-      .select("-__v");
-
-    res.status(200).json({
-      success: true,
-      count: tickets.length,
-      tickets,
+      newTicket: ticket,
     });
   } catch (error) {
     console.error("Get my tickets error:", error);
@@ -157,7 +124,7 @@ exports.getAllTickets = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Tickets fetched successfully",
-      tickets,
+      allTickets: tickets,
     });
   } catch (error) {
     console.error("Get all tickets error:", error);
@@ -207,6 +174,7 @@ exports.getTicketById = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      message: "Ticket fetched successfully",
       ticket,
     });
   } catch (error) {
@@ -343,7 +311,7 @@ exports.updateTicketStatus = async (req, res) => {
     res.status(200).json({
       success: true,
       message: `Ticket status updated to ${normalizedStatus}`,
-      ticket,
+      updatedTicketStatus: ticket,
     });
   } catch (error) {
     console.error("Update ticket status error:", error);
