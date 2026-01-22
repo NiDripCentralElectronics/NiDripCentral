@@ -26,9 +26,18 @@ router.post(
  * @desc Retrieve all tickets created by the authenticated user
  */
 router.get(
-  "/get-my-tickets",
+  "/get-my-tickets/:userId",
   encryptedAuthMiddleware,
   supportController.getMyTickets,
+);
+
+/**
+ * @desc Retrieve ticket by id
+ */
+router.get(
+  "/get-ticket-by-id/:ticketId",
+  encryptedAuthMiddleware,
+  supportController.getTicketById,
 );
 
 /**

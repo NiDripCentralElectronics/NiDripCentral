@@ -87,7 +87,7 @@ exports.createTicket = async (req, res) => {
 
 /**
  * Get all support tickets created by the authenticated user
- * GET /api/support/my-tickets
+ * GET /api/support/get-my-tickets
  * Private access
  *
  * @async
@@ -97,7 +97,7 @@ exports.createTicket = async (req, res) => {
  */
 exports.getMyTickets = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const { userId } = req.params;
 
     const tickets = await Support.find({ user: userId })
       .sort({ createdAt: -1 }) // newest first
@@ -188,7 +188,7 @@ exports.getTicketById = async (req, res) => {
   try {
     const { ticketId } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === "SUPERADMIN" || req.user.role === "ADMIN";
+    const isAdmin = req.user.role === "SUPERADMIN" || req.user.role === "USER";
 
     const ticket = await Support.findById(ticketId).populate(
       "user",
@@ -237,7 +237,7 @@ exports.deleteTicket = async (req, res) => {
   try {
     const { ticketId } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === "SUPERADMIN" || req.user.role === "ADMIN";
+    const isAdmin = req.user.role === "SUPERADMIN" || req.user.role === "USER";
 
     const ticket = await Support.findById(ticketId);
 
@@ -269,5 +269,3 @@ exports.deleteTicket = async (req, res) => {
     });
   }
 };
-
-
