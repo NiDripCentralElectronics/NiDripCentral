@@ -205,8 +205,7 @@ exports.loginUser = async (req, res) => {
       user: {
         id: user._id,
         userName: user.userName,
-        email: user.email,
-        phone: user.phone ? { ...user.phone, fullPhone: user.fullPhone } : null,
+        email: user.email,        
       },
       token,
       expiresIn: 86400,
