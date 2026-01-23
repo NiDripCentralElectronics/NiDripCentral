@@ -142,10 +142,40 @@ const getEmailTemplate = (content, title = "NIDRIP Notification") => `
     .info-box {
       background: #f8f9fa;
       border-left: 5px solid #E32264;
-      padding: 24px;
-      border-radius: 8px;
-      margin: 32px 0;
-      font-size: 15px;
+      padding: 28px;
+      border-radius: 12px;
+      margin: 36px 0;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .info-box strong {
+      color: #1a1a1a;
+      display: inline-block;
+      min-width: 140px;
+    }
+    .items-list {
+      list-style: none;
+      padding: 0;
+      margin: 24px 0;
+    }
+    .items-list li {
+      padding: 16px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .items-list li:last-child {
+      border-bottom: none;
+    }
+    .total-box {
+      background: #f0f0f0;
+      padding: 28px;
+      border-radius: 12px;
+      margin: 36px 0;
+      text-align: right;
+      font-size: 17px;
+    }
+    .total-box strong {
+      font-size: 22px;
+      color: #E32264;
     }
     .footer {
       background: #0f0f1a;
@@ -172,6 +202,7 @@ const getEmailTemplate = (content, title = "NIDRIP Notification") => `
     @media (max-width: 600px) {
       .main-content { padding: 40px 32px; }
       .header { padding: 40px 24px; }
+      .info-box { padding: 20px; }
     }
   </style>
 </head>
@@ -186,7 +217,8 @@ const getEmailTemplate = (content, title = "NIDRIP Notification") => `
               src="https://res.cloudinary.com/dd524q9vc/image/upload/v1769081264/NiDrip/logo/logo_ny2do0.png" 
               alt="NIDRIP" 
               class="logo"
-            />            
+            />
+            <h1 class="brand-title">NIDRIP</h1>
           </div>
 
           <!-- Main Content -->
@@ -225,6 +257,17 @@ const shortenId = (id) => {
 };
 
 /**
+ * Format date as "23 January 2026" (date only, no time)
+ */
+const formatDate = (date) => {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(date));
+};
+
+/**
  * Get frontend URL for a specific user role
  * @param {string} role - User role
  * @returns {string} Base frontend URL
@@ -260,8 +303,8 @@ const sendPasswordResetEmail = async (toEmail, resetToken, role) => {
         Reset Your Password
       </h2>
       <p style="color:#444444;line-height:1.8;margin-bottom:40px;font-size:17px;">
-        We received a request to reset your NIDRIP account password.<br>
-        Click the button below to set a new password.
+        We received a request to reset the password for your NIDRIP account.<br>
+        Please click the button below to create a new password.
       </p>
       
       <div style="margin:50px 0;">
@@ -271,8 +314,8 @@ const sendPasswordResetEmail = async (toEmail, resetToken, role) => {
       </div>
 
       <p style="color:#666666;font-size:15px;line-height:1.7;margin-top:40px;">
-        This link will expire in <strong style="color:#E32264;">1 hour</strong> for your security.<br><br>
-        If you didn't request this, you can safely ignore this email.
+        This link will expire in <strong style="color:#E32264;">1 hour</strong> for security reasons.<br><br>
+        If you did not request this password reset, please disregard this email.
       </p>
     </div>
   `;
@@ -296,23 +339,26 @@ const sendTicketConfirmationToUser = async (userEmail, userName, ticket) => {
 
   const content = `
     <h2 style="color:#E32264;font-size:30px;margin-bottom:20px;">Hello ${userName},</h2>
+    
     <p style="font-size:17px;color:#444444;margin-bottom:32px;">
-      Thank you for contacting NIDRIP Support. Your ticket has been successfully received.
+      Thank you for reaching out to NIDRIP Support. We have successfully received your ticket and it is now in our system.
     </p>
     
     <div class="info-box">
       <strong>Ticket ID:</strong> ${shortTicketId}<br><br>
       <strong>Subject:</strong> ${ticket.subject}<br><br>
       <strong>Priority:</strong> <span style="color:#E32264;font-weight:700;">${ticket.priority}</span><br><br>
-      <strong>Submitted:</strong> ${new Date(ticket.createdAt).toLocaleString()}
+      <strong>Submitted on:</strong> ${formatDate(ticket.createdAt)}
     </div>
     
-    <p style="font-size:17px;color:#444444;">
-      Our support team will review your request and get back to you as soon as possible.
+    <p style="font-size:17px;color:#444444;margin-bottom:32px;">
+      Our dedicated support team will review your request and respond as quickly as possible. 
+      You can track the status of your ticket anytime in the <strong>My Tickets</strong> section of your account.
     </p>
     
-    <p style="margin-top:40px;font-size:16px;">
-      Thank you for your patience,<br>
+    <p style="font-size:16px;color:#444444;">
+      We appreciate your patience and are here to help.<br><br>
+      Best regards,<br>
       <strong>NIDRIP Support Team</strong>
     </p>
   `;
@@ -332,18 +378,18 @@ const sendNewTicketNotificationToAdmin = async (ticket) => {
   const shortTicketId = shortenId(ticket._id);
 
   const content = `
-    <h2 style="color:#E32264;font-size:30px;margin-bottom:20px;">New Support Ticket</h2>
+    <h2 style="color:#E32264;font-size:30px;margin-bottom:20px;">New Support Ticket Received</h2>
     
-    <p style="font-size:17px;color:#444444;">
-      A new support ticket has been submitted by a user.
+    <p style="font-size:17px;color:#444444;margin-bottom:32px;">
+      A customer has submitted a new support ticket that requires attention.
     </p>
     
     <div class="info-box">
       <strong>Ticket ID:</strong> ${shortTicketId}<br><br>
-      <strong>User:</strong> ${ticket.user.userName} (${ticket.user.email})<br><br>
+      <strong>Customer:</strong> ${ticket.user.userName} (${ticket.user.email})<br><br>
       <strong>Subject:</strong> ${ticket.subject}<br><br>
       <strong>Priority:</strong> <span style="color:#E32264;font-weight:700;">${ticket.priority}</span><br><br>
-      <strong>Submitted:</strong> ${new Date(ticket.createdAt).toLocaleString()}
+      <strong>Submitted on:</strong> ${formatDate(ticket.createdAt)}
     </div>
     
     <div style="text-align:center;margin:40px 0;">
@@ -354,7 +400,7 @@ const sendNewTicketNotificationToAdmin = async (ticket) => {
     </div>
     
     <p style="font-size:16px;color:#666666;">
-      Please review this ticket at your earliest convenience.
+      Please review and respond to this ticket at your earliest convenience.
     </p>
   `;
 
@@ -380,27 +426,28 @@ const sendTicketStatusUpdateEmail = async (
   const content = `
     <h2 style="color:#E32264;font-size:30px;margin-bottom:20px;">Ticket Status Update</h2>
     
-    <p style="font-size:17px;color:#444444;">
+    <p style="font-size:17px;color:#444444;margin-bottom:20px;">
       Hello ${userName},
     </p>
     
     <p style="font-size:17px;color:#444444;margin-bottom:32px;">
-      Great news! Your support ticket has been updated.
+      We have an update on your support ticket. The status has been changed to:
     </p>
     
     <div class="info-box">
       <strong>Ticket ID:</strong> ${shortTicketId}<br><br>
       <strong>Subject:</strong> ${subject}<br><br>
-      <strong>New Status:</strong> <span style="color:#E32264;font-weight:700;font-size:18px;">${newStatus}</span><br><br>
-      <strong>Updated on:</strong> ${new Date().toLocaleString()}
+      <strong>New Status:</strong> <span style="color:#E32264;font-weight:700;font-size:20px;">${newStatus}</span><br><br>
+      <strong>Updated on:</strong> ${formatDate(new Date())}
     </div>
     
-    <p style="font-size:17px;color:#444444;">
-      You can view full details and history in your <strong>My Tickets</strong> section.
+    <p style="font-size:17px;color:#444444;margin-bottom:32px;">
+      You can view the full conversation and latest updates in the <strong>My Tickets</strong> section of your account.
     </p>
     
-    <p style="margin-top:40px;font-size:16px;">
-      Thank you for your patience,<br>
+    <p style="font-size:16px;color:#444444;">
+      Thank you for your patience.<br><br>
+      Best regards,<br>
       <strong>NIDRIP Support Team</strong>
     </p>
   `;
@@ -425,9 +472,15 @@ const sendOrderConfirmationToUser = async (order) => {
   const itemsList = order.items
     .map(
       (item) => `
-        <li style="margin:12px 0;">
-          <strong>${item.product.title}</strong> × ${item.quantity}<br>
-          <span style="color:#666;">Price: Rs. ${item.priceAtPurchase.toLocaleString()}</span>
+        <li class="items-list-li">
+          <div style="display:flex;justify-content:space-between;align-items:start;">
+            <div>
+              <strong>${item.product.title}</strong> × ${item.quantity}
+            </div>
+            <div style="text-align:right;color:#666;">
+              Rs. ${item.priceAtPurchase.toLocaleString()}
+            </div>
+          </div>
         </li>
       `,
     )
@@ -436,35 +489,36 @@ const sendOrderConfirmationToUser = async (order) => {
   const content = `
     <h2 style="color:#E32264;font-size:30px;margin-bottom:20px;">Order Confirmed! 🎉</h2>
     
-    <p style="font-size:17px;color:#444444;">
+    <p style="font-size:17px;color:#444444;margin-bottom:20px;">
       Hello ${order.user.userName},
     </p>
     
     <p style="font-size:17px;color:#444444;margin-bottom:32px;">
-      Thank you for shopping with NIDRIP! Your order has been successfully placed.
-      We'll prepare it and keep you updated.
+      Thank you for your purchase! Your order has been successfully placed and is now being processed.
+      We will keep you updated on its progress.
     </p>
     
     <div class="info-box">
       <strong>Order ID:</strong> ${shortOrderId}<br><br>
-      <strong>Payment Method:</strong> ${order.paymentMethod}<br><br>
-      <strong>Shipping Address:</strong><br>${order.shippingAddress.replace(/\n/g, "<br>")}
-      <strong>Order Date:</strong> ${new Date(order.createdAt).toLocaleString()}<br><br>
+      <strong>Order Date:</strong> ${formatDate(order.createdAt)}<br><br>
+      <strong>Payment Method:</strong> Cash on Delivery<br><br>
+      <strong>Shipping Address:</strong><br>
+      <div style="margin-top:8px;">${order.shippingAddress.replace(/\n/g, "<br>")}</div>
     </div>
     
-    <h3 style="margin:32px 0 16px;color:#E32264;">Order Items</h3>
-    <ul style="padding-left:20px;">
+    <h3 style="margin:36px 0 16px;color:#E32264;font-size:22px;">Order Summary</h3>
+    <ul class="items-list">
       ${itemsList}
     </ul>
     
-    <div style="background:#f0f0f0;padding:20px;border-radius:8px;margin:32px 0;">
-      <strong>Subtotal:</strong> Rs. ${order.totalAmount - order.shippingCost}<br>
-      <strong>Shipping:</strong> Rs. ${order.shippingCost}<br><br>
-      <strong style="font-size:20px;color:#E32264;">Total: Rs. ${order.totalAmount.toLocaleString()}</strong>
+    <div class="total-box">
+      <div><strong>Subtotal:</strong> Rs. ${(order.totalAmount - order.shippingCost).toLocaleString()}</div>
+      <div><strong>Shipping:</strong> Rs. ${order.shippingCost.toLocaleString()}</div>
+      <div style="margin-top:16px;"><strong>Total Amount:</strong> Rs. ${order.totalAmount.toLocaleString()}</div>
     </div>
     
-    <p style="margin-top:40px;font-size:16px;">
-      We'll send you updates as your order moves through processing and shipping.<br>
+    <p style="font-size:16px;color:#444444;">
+      We will notify you when your order is shipped and provide tracking information.<br><br>
       Thank you for choosing NIDRIP!<br><br>
       <strong>NIDRIP Team</strong>
     </p>
@@ -478,7 +532,7 @@ const sendOrderConfirmationToUser = async (order) => {
 };
 
 /**
- * Send new order notification to Admin
+ * Send new order notification to Admin (no amount in subject or visible total)
  */
 const sendNewOrderNotificationToAdmin = async (order) => {
   const adminEmail = process.env.EMAIL_USER || "support@nidrip.com";
@@ -487,9 +541,12 @@ const sendNewOrderNotificationToAdmin = async (order) => {
   const itemsList = order.items
     .map(
       (item) => `
-        <li style="margin:12px 0;">
-          <strong>${item.product.title}</strong> × ${item.quantity}<br>
-          <span style="color:#666;">Price: Rs. ${item.priceAtPurchase.toLocaleString()}</span>
+        <li class="items-list-li">
+          <div style="display:flex;justify-content:space-between;align-items:start;">
+            <div>
+              <strong>${item.product.title}</strong> × ${item.quantity}
+            </div>
+          </div>
         </li>
       `,
     )
@@ -498,21 +555,20 @@ const sendNewOrderNotificationToAdmin = async (order) => {
   const content = `
     <h2 style="color:#E32264;font-size:30px;margin-bottom:20px;">New Order Received</h2>
     
-    <p style="font-size:17px;color:#444444;">
-      A new order has been placed on NIDRIP.
+    <p style="font-size:17px;color:#444444;margin-bottom:32px;">
+      A new order has been placed and is awaiting processing.
     </p>
     
     <div class="info-box">
       <strong>Order ID:</strong> ${shortOrderId}<br><br>
       <strong>Customer:</strong> ${order.user.userName} (${order.user.email})<br><br>
       <strong>Phone:</strong> ${order.user.phone || "Not provided"}<br><br>
-      <strong>Total Amount:</strong> Rs. ${order.totalAmount.toLocaleString()}<br><br>
-      <strong>Payment:</strong> ${order.paymentMethod}<br><br>
-      <strong>Placed:</strong> ${new Date(order.createdAt).toLocaleString()}
+      <strong>Payment Method:</strong> Cash on Delivery<br><br>
+      <strong>Order Date:</strong> ${formatDate(order.createdAt)}
     </div>
     
-    <h3 style="margin:32px 0 16px;color:#E32264;">Items Ordered</h3>
-    <ul style="padding-left:20px;">
+    <h3 style="margin:36px 0 16px;color:#E32264;font-size:22px;">Items Ordered</h3>
+    <ul class="items-list">
       ${itemsList}
     </ul>
     
@@ -524,13 +580,13 @@ const sendNewOrderNotificationToAdmin = async (order) => {
     </div>
     
     <p style="font-size:16px;color:#666666;">
-      Please process this order in the admin panel.
+      Please review and process this order promptly in the admin panel.
     </p>
   `;
 
   await sendEmail({
     to: adminEmail,
-    subject: `New Order ${shortOrderId} - Rs. ${order.totalAmount.toLocaleString()}`,
+    subject: `New Order Received ${shortOrderId}`,
     html: getEmailTemplate(content, "New Order Alert"),
   });
 };
