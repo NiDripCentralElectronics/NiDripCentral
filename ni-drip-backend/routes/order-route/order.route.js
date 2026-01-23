@@ -21,4 +21,40 @@ router.post(
   orderController.placeOrder,
 );
 
+/**
+ * @desc Get all orders
+ */
+router.get(
+  "/get-all-orders",
+  encryptedAuthMiddleware,
+  orderController.getAllOrders,
+);
+
+/**
+ * @desc Get order by ID
+ */
+router.get(
+  "/get-order-by-id/:orderId",
+  encryptedAuthMiddleware,
+  orderController.getOrderById,
+);
+
+/**
+ * @desc Get orders for logged-in user
+ */
+router.get(
+  "/get-my-orders",
+  encryptedAuthMiddleware,
+  orderController.getUserOrders,
+);
+
+/**
+ * @desc Cancel an order
+ */
+router.put(
+  "/cancel-order/:orderId",
+  encryptedAuthMiddleware,
+  orderController.cancelOrder,
+);
+
 module.exports = router;

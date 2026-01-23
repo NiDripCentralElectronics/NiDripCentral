@@ -590,6 +590,125 @@ const sendNewOrderNotificationToAdmin = async (order) => {
   });
 };
 
+// Add these new helpers to your existing email.helper.js file
+// (Place them alongside the other order/ticket email helpers)
+
+/**
+ * Send cancellation confirmation email to the customer
+ */
+const sendOrderCancellationToUser = async (order, reasonForCancel) => {
+  const shortOrderId = shortenId(order._id);
+
+  const itemsList = order.items
+    .map(
+      (item) => `
+        <li style="margin:12px 0;">
+          <strong>${item.product.title}</strong> × ${item.quantity}<br>
+          <span style="color:#666;">Price: Rs. ${item.priceAtPurchase.toLocaleString()}</span>
+        </li>
+      `,
+    )
+    .join("");
+
+  const content = `
+    <h2 style="color:#E32264;font-size:30px;margin-bottom:20px;">Order Cancelled</h2>
+    
+    <p style="font-size:17px;color:#444444;margin-bottom:20px;">
+      Hello ${order.user.userName},
+    </p>
+    
+    <p style="font-size:17px;color:#444444;margin-bottom:32px;">
+      Your order has been successfully cancelled as per your request.
+      No charges have been applied since payment was set for Cash on Delivery.
+    </p>
+    
+    <div class="info-box">
+      <strong>Order ID:</strong> ${shortOrderId}<br><br>
+      <strong>Cancellation Reason:</strong> ${reasonForCancel}<br><br>
+      <strong>Cancelled on:</strong> ${formatDate(new Date())}<br><br>
+      <strong>Original Order Date:</strong> ${formatDate(order.createdAt)}
+    </div>
+    
+    <h3 style="margin:32px 0 16px;color:#E32264;">Cancelled Items</h3>
+    <ul style="padding-left:20px;">
+      ${itemsList}
+    </ul>
+    
+    <p style="font-size:17px;color:#444444;margin-bottom:32px;">
+      The items have been returned to stock and are available for purchase again.
+    </p>
+    
+    <p style="font-size:16px;color:#444444;">
+      If you have any questions or need further assistance, feel free to contact our support team.<br><br>
+      Thank you for choosing NIDRIP.<br><br>
+      <strong>NIDRIP Team</strong>
+    </p>
+  `;
+
+  await sendEmail({
+    to: order.user.email,
+    subject: `NIDRIP Order Cancelled ${shortOrderId}`,
+    html: getEmailTemplate(content, "Order Cancellation Confirmation"),
+  });
+};
+
+/**
+ * Send cancellation notification to Admin
+ */
+const sendOrderCancellationToAdmin = async (order, reasonForCancel) => {
+  const adminEmail = process.env.EMAIL_USER || "support@nidrip.com";
+  const shortOrderId = shortenId(order._id);
+
+  const itemsList = order.items
+    .map(
+      (item) => `
+        <li style="margin:12px 0;">
+          <strong>${item.product.title}</strong> × ${item.quantity}<br>
+          <span style="color:#666;">Price: Rs. ${item.priceAtPurchase.toLocaleString()}</span>
+        </li>
+      `,
+    )
+    .join("");
+
+  const content = `
+    <h2 style="color:#E32264;font-size:30px;margin-bottom:20px;">Order Cancelled by Customer</h2>
+    
+    <p style="font-size:17px;color:#444444;margin-bottom:32px;">
+      A customer has cancelled their order.
+    </p>
+    
+    <div class="info-box">
+      <strong>Order ID:</strong> ${shortOrderId}<br><br>
+      <strong>Customer:</strong> ${order.user.userName} (${order.user.email})<br><br>
+      <strong>Phone:</strong> ${order.user.phone || "Not provided"}<br><br>
+      <strong>Cancellation Reason:</strong> ${reasonForCancel}<br><br>
+      <strong>Cancelled on:</strong> ${formatDate(new Date())}
+    </div>
+    
+    <h3 style="margin:32px 0 16px;color:#E32264;">Cancelled Items</h3>
+    <ul style="padding-left:20px;">
+      ${itemsList}
+    </ul>
+    
+    <div style="text-align:center;margin:40px 0;">
+      <a href="${process.env.ADMIN_DASHBOARD_URL}/orders/${order._id}"
+         class="btn-primary">
+        View Order Details
+      </a>
+    </div>
+    
+    <p style="font-size:16px;color:#666666;">
+      Stock quantities have been automatically restored.
+    </p>
+  `;
+
+  await sendEmail({
+    to: adminEmail,
+    subject: `Order Cancelled ${shortOrderId} - Customer Request`,
+    html: getEmailTemplate(content, "Order Cancellation Alert"),
+  });
+};
+
 module.exports = {
   sendEmail,
   getEmailTemplate,
@@ -599,4 +718,6 @@ module.exports = {
   sendTicketStatusUpdateEmail,
   sendOrderConfirmationToUser,
   sendNewOrderNotificationToAdmin,
+  sendOrderCancellationToUser,
+  sendOrderCancellationToAdmin,
 };
