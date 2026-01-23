@@ -5,6 +5,8 @@
  */
 
 const bcrypt = require("bcrypt");
+const axios = require("axios");
+const crypto = require("crypto");
 const User = require("../../models/user-model/user.model");
 const Cart = require("../../models/cart-model/cart.model");
 const Order = require("../../models/order-model/order.model");

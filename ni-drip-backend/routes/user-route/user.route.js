@@ -92,6 +92,7 @@ router.patch(
 
 router.post(
   "/send-verification-email",
+  encryptedAuthMiddleware,
   userController.requestEmailVerification,
 );
 
@@ -101,6 +102,10 @@ router.post(
  * @access  Public
  */
 
-router.post("/verify-email", userController.verifyEmail);
+router.post(
+  "/verify-email",
+  encryptedAuthMiddleware,
+  userController.verifyEmail,
+);
 
 module.exports = router;
