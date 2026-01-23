@@ -217,8 +217,7 @@ const getEmailTemplate = (content, title = "NIDRIP Notification") => `
               src="https://res.cloudinary.com/dd524q9vc/image/upload/v1769081264/NiDrip/logo/logo_ny2do0.png" 
               alt="NIDRIP" 
               class="logo"
-            />
-            <h1 class="brand-title">NIDRIP</h1>
+            />            
           </div>
 
           <!-- Main Content -->
@@ -501,7 +500,7 @@ const sendOrderConfirmationToUser = async (order) => {
     <div class="info-box">
       <strong>Order ID:</strong> ${shortOrderId}<br><br>
       <strong>Order Date:</strong> ${formatDate(order.createdAt)}<br><br>
-      <strong>Payment Method:</strong> Cash on Delivery<br><br>
+      <strong>Payment Method:</strong>${order.paymentMethod}<br><br>
       <strong>Shipping Address:</strong><br>
       <div style="margin-top:8px;">${order.shippingAddress.replace(/\n/g, "<br>")}</div>
     </div>
@@ -563,7 +562,7 @@ const sendNewOrderNotificationToAdmin = async (order) => {
       <strong>Order ID:</strong> ${shortOrderId}<br><br>
       <strong>Customer:</strong> ${order.user.userName} (${order.user.email})<br><br>
       <strong>Phone:</strong> ${order.user.phone || "Not provided"}<br><br>
-      <strong>Payment Method:</strong> Cash on Delivery<br><br>
+      <strong>Payment Method:</strong>${order.paymentMethod}<br><br>
       <strong>Order Date:</strong> ${formatDate(order.createdAt)}
     </div>
     
