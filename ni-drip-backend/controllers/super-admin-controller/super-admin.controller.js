@@ -5,6 +5,7 @@
  */
 
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const SuperAdmin = require("../../models/super-admin-model/super-admin.model");
 const {
   uploadToCloudinary,

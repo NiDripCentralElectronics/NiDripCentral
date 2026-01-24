@@ -1,20 +1,19 @@
 /**
- * NotFound Component Styles
- * 
- * Comprehensive styling for the 404 error page featuring:
- * - Animated gradient backgrounds using global color variables
- * - Floating particle effects
- * - Smooth transitions and animations
- * - Responsive design patterns
- * - Accessibility considerations
+ * @file Not-Found.css
+ * @module Styles/NotFound
+ * @description 
+ * Stylesheet for the 404 Error environment.
+ * * **Visual Architecture:**
+ * - **Atmospheric Layer:** Uses an 8-second `gradientShift` animation to create a living background.
+ * - **Particle System:** Implements lightweight, non-interactive `floatUp` animations for depth.
+ * - **Glassmorphism Core:** Utilizes `backdrop-filter` and semi-transparent white backgrounds for the primary content card.
+ * - **Typography:** Features a pulsed, high-contrast digital display for the "404" status code.
+ * * **Performance Note:** Uses `pointer-events: none` on the particle layer to ensure user interactions with buttons are never obstructed.
+ * * @requires ../../styles/global.styles.css
  */
 
 @import url("../../styles/global.styles.css");
 
-/**
- * Main container styles with animated gradient background
- * Prevents scrolling by fixing the container to viewport
- */
 #not-found-container {
   display: flex;
   justify-content: center;
@@ -66,7 +65,9 @@
   background: rgba(255, 255, 255, 0.95);
   padding: var(--spacing-xl);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    var(--shadow-md),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
   text-align: center;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -94,7 +95,8 @@
   font-weight: 800;
   color: var(--primary);
   font-family: var(--font-family);
-  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1),
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.1),
     -1px -1px 0 rgba(255, 255, 255, 0.5);
   animation: pulse 2s ease-in-out infinite;
 }

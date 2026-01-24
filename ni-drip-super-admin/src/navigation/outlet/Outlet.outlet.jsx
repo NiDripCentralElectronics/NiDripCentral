@@ -1,76 +1,63 @@
 /**
- * Dashboard Layout
- *
- * Provides the main layout structure for authenticated dashboard pages.
- * It includes:
- * - A persistent Header at the top
- * - A Sidebar for navigation
- * - A main content area where nested routes are rendered via React Router's Outlet
- *
- * This layout ensures a consistent structure across all admin dashboard screens.
+ * @file Dashboard.layout.jsx
+ * @module Layouts/Dashboard
+ * @description
+ * The structural wrapper for the Admin application.
+ * * **Core Features:**
+ * - **Adaptive Navigation:** Dynamically toggles between a fixed sidebar (Desktop) and a drawer-style sidebar (Mobile).
+ * - **Outlet Injection:** Serves as the parent route for all dashboard sub-pages (Reports, Users, Settings).
+ * - **Resize Watcher:** Actively monitors window dimensions to prevent layout "ghosting" when transitioning between viewports.
+ * * **State Management:**
+ * - `sidebarOpen`: Controls the visibility of the mobile drawer.
+ * - `isMobile`: Derived state based on the 1024px breakpoint.
  */
 
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./Dashboard.layout.css";
-import Header from '../../utilities/Header/Header.utility';
-import Sidebar from '../../utilities/Sidebar/Sidebar.utility';
+import Sidebar from "../../utilities/Sidebar/Sidebar.utility";
 
-/**
- * Dashboard page layout wrapper.
- *
- * @returns {JSX.Element} The structured dashboard layout with header, sidebar, and content area.
- */
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
-  // Handle responsive behavior
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
-      
-      // Close sidebar when switching to mobile view
-      if (mobile && sidebarOpen) {
+
+      if (!mobile) {
         setSidebarOpen(false);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen]);
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-
-  const closeSidebar = () => {
-    if (isMobile && sidebarOpen) {
-      setSidebarOpen(false);
-    }
-  };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div className="dashboard-layout">
-      <Header onMenuClick={toggleSidebar} />
-      <div className="dashboard-container">
-        <aside 
-          className={`sidebar-container ${sidebarOpen ? 'sidebar-open' : ''} ${isMobile ? 'sidebar-mobile' : ''}`}
-          onClick={closeSidebar}
-        >
-          <Sidebar />
-        </aside>
-        
-        {/* Overlay for mobile when sidebar is open */}
-        {isMobile && sidebarOpen && (
-          <div className="sidebar-overlay" onClick={closeSidebar}></div>
-        )}
-        
-        <main className="content" onClick={closeSidebar}>
-          <Outlet />
-        </main>
-      </div>
+      {/* Sidebar */}
+      <aside
+        className={`sidebar-container ${
+          isMobile && sidebarOpen ? "sidebar-open" : ""
+        } ${isMobile ? "sidebar-mobile" : ""}`}
+      >
+        <Sidebar />
+      </aside>
+
+      {/* Overlay for mobile */}
+      {isMobile && sidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Main Content */}
+      <main className="content">
+        <Outlet />
+      </main>
     </div>
   );
 };

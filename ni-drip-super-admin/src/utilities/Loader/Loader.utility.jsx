@@ -1,15 +1,13 @@
 /**
- * Loader Component
- *
- * A simple loading spinner component used to indicate ongoing background
- * processes such as data fetching or form submissions.
- *
- * @component
- * @example
- * // Basic usage
- * <Loader />
- *
- * @returns {JSX.Element} A centered animated loader element.
+ * A lightweight, animated circular spinner used for indicating background tasks.
+ * * @component
+ * @description
+ * Renders a centered loading animation. Best used within buttons,
+ * cards, or full-page overlays during data fetching or form submissions.
+ * * @example
+ * // Displaying the loader conditionally
+ * {loading && <Loader />}
+ * * @returns {React.JSX.Element} A section containing a centered animated spinner.
  */
 
 import "../../styles/global.styles.css";

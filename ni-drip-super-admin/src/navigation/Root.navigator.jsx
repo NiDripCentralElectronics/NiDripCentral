@@ -1,15 +1,16 @@
 /**
- * Root Navigator
- *
- * This component sets up the top-level application providers
- * and navigation structure. It integrates:
- * - Redux for global state management
- * - Redux Persist for persisting state across sessions
- * - React Router for navigation and routing
- *
- * The RootNavigator ensures that all child components
- * have access to the global store and persisted state,
- * while managing navigation through AppNavigator.
+ * @file Root.navigator.jsx
+ * @module Navigation/Root
+ * @description
+ * The entry-point provider architecture for the application.
+ * * **Responsibility:**
+ * This component acts as the "Shell" of the application, injecting all necessary
+ * global contexts. It ensures that state management, persistence, and routing
+ * are initialized before the UI components are rendered.
+ * * **Provider Stack:**
+ * 1. **Redux Provider:** Injects the global store.
+ * 2. **PersistGate:** Delays rendering until the persisted state is rehydrated.
+ * 3. **Router (Routes):** Manages top-level URL matching for the sub-navigator.
  */
 
 import { Routes, Route } from "react-router-dom";

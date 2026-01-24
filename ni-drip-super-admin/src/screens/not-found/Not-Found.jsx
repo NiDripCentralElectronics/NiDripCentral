@@ -1,14 +1,14 @@
 /**
- * NotFound Component
- *
- * Displays a custom 404 error page with animated elements and interactive features.
- * Provides users with options to navigate back to safety while maintaining brand consistency.
- *
- * @component
- * @example
- * return <NotFound />
- *
- * @returns {JSX.Element} Rendered 404 not found page component
+ * @file Not-Found.jsx
+ * @module Screens/NotFound
+ * @description
+ * A high-fidelity "404 Not Found" screen designed to gracefully handle routing errors.
+ * * **Key Logic:**
+ * - **Dynamic Particle Engine:** Generates randomized floating background elements using React state and intervals.
+ * - **Navigation Recovery:** Provides multiple escape hatches (Login/Back) to prevent user frustration.
+ * - **Lifecycle Management:** Uses cleanup functions to prevent memory leaks from the particle generation interval.
+ * * @requires react-router-dom
+ * @requires ./Not-Found.css
  */
 
 import React, { useEffect, useState } from "react";

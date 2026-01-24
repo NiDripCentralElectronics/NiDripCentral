@@ -1,15 +1,14 @@
 /**
- * Redux Store Configuration
- *
- * This file configures the global Redux store with persistence support.
- * It integrates:
- * - Redux Toolkit for simplified store setup
- * - Redux Persist for persisting and rehydrating state from localStorage
- * - Multiple slice reducers
- *
- * The store is designed to ensure authentication state is preserved
- * across sessions, while other slices remain non-persistent for performance
- * and data freshness.
+ * @file Store.config.js
+ * @module Core/Redux/Store
+ * @description 
+ * Centralized Application Store configuration. 
+ * * **Key Components:**
+ * - **Redux Toolkit:** Handles state management with a simplified API.
+ * - **Redux Persist:** Enables state persistence across browser sessions.
+ * - **Persistence Strategy:** Selective whitelisting to balance performance and user experience.
+ * * @requires redux-persist
+ * @requires @reduxjs/toolkit
  */
 
 import { configureStore } from "@reduxjs/toolkit";

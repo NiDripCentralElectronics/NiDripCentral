@@ -1,8 +1,14 @@
 /**
- * Button Stylesheet
- *
- * Defines the base styles for the custom button component,
- * including variants, hover effects, and loading/disabled states.
+ * @file Button.utility.css
+ * @module Styles/Button
+ * @description 
+ * Defines the core visual architecture for the custom button component.
+ * * This stylesheet provides:
+ * - **Base Layout:** Structural properties, typography, and box model settings.
+ * - **Design Tokens:** Integration with global CSS variables for themes and spacing.
+ * - **Micro-interactions:** A skewed "shine" hover effect and active-state tactile scaling.
+ * - **State Management:** Explicit styling for disabled and inactive interaction states.
+ * * @requires ../../styles/global.styles.css - Relies on global design tokens (colors, spacing, font sizes).
  */
 
 @import url("../../styles/global.styles.css");

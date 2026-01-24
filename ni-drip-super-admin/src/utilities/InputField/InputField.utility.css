@@ -1,16 +1,14 @@
 /**
- * InputField Stylesheet
- *
- * Provides styles for the reusable InputField component.
- * Supports:
- * - Standard inputs with floating labels
- * - Dropdowns (select inputs)
- * - Multiline textarea fields
- *
- * Features:
- * - Floating label animation when focused or filled
- * - Consistent styling with global design tokens
- * - Support for full-width or inline layouts
+ * @file InputField.utility.css
+ * @module Styles/InputField
+ * @description
+ * Implements styling for a versatile form input system.
+ * * **Key Features:**
+ * - **Floating Labels:** Dynamic label positioning that reacts to focus and input value.
+ * - **Icon Support:** Absolute positioning for prefix icons with proper spacing.
+ * - **Flexible Input Types:** Base styling compatible with text inputs, dropdowns, and textareas.
+ * - **State Feedback:** Visual cues for focus-within and active validation states.
+ * * @requires ../../styles/global.styles.css - Depends on design tokens for colors, radius, and typography.
  */
 
 @import url("../../styles/global.styles.css");

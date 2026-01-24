@@ -1,23 +1,18 @@
 /**
- * Authentication Slice
- *
- * Manages authentication state for the Super Admin, including
- * registration, login, and logout flows.
- *
- * Features:
- * - Signup: Creates new Super Admin
- * - Login: Authenticates an existing Super Admin
- * - Forgot Password: Send Email Notification For Password Reset
- * - Reset Password: To Reset Admin Password
- * - Logout: Ends the current session
- *
- * State Shape:
- * {
- *   user: { id, email, userName } | null,
- *   token: string | null,
- *   loading: boolean,
- *   error: any
- * }
+ * @file Auth.slice.js
+ * @module Redux/Slices/Auth
+ * @description
+ * Redux Toolkit slice managing the Authentication lifecycle for Super Admins.
+ * * **Functionality:**
+ * - Registration and Identity verification.
+ * - Secure Session management (JWT storage in LocalStorage).
+ * - Password recovery workflows (Forgot/Reset).
+ * * **State Shape:**
+ * @typedef {Object} AuthState
+ * @property {Object|null} user - Data for the authenticated admin {id, email, userName}.
+ * @property {string|null} token - JWT Bearer token for authenticated requests.
+ * @property {boolean} loading - Global loading indicator for auth async operations.
+ * @property {Object|null} error - Serialized error object from the last failed operation.
  */
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";

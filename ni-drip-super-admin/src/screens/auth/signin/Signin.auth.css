@@ -1,5 +1,15 @@
 /**
- * Signin Screen Stylesheet - Enhanced Layout (Updated with 10 balls + visible orbits)
+ * @file Signin.auth.css
+ * @module Styles/Signin
+ * @description 
+ * Stylesheet for the primary Authentication entry point.
+ * * **Layout Architecture:**
+ * - **Split-Panel Design:** Uses a 30% fixed-width left panel for functionality and a 70% fluid right panel for aesthetics.
+ * - **Glassmorphism:** Applies a blurred linear gradient to the login sidebar for a modern UI feel.
+ * - **Orbital Motion System:** A sophisticated decorative engine featuring 5 distinct orbital paths (visible) and high-fidelity radial-gradient "planets."
+ * * **Animation Specs:**
+ * - Uses a central `rotate` keyframe with varying durations (24s to 54s) and alternating directions (normal/reverse) to create a multi-dimensional effect.
+ * * @requires ../../../styles/global.styles.css
  */
 
 @import url("../../../styles/global.styles.css");

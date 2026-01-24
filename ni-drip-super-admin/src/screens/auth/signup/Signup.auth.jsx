@@ -1,5 +1,35 @@
 /**
- * Signup Component - Matched to Signin Screen Layout
+ * @file Signup.auth.jsx
+ * @module Screens/Auth/Signup
+ * @description
+ * Registration screen for new Super Admins.
+ * * **Core Functionality:**
+ * - **Media Handling:** Manages profile picture selection and preview using `FileReader` and `useRef`.
+ * - **Multipart Form Data:** Processes registration as `FormData` to support simultaneous text and binary (file) uploads.
+ * - **Real-time Validation:** Enforces rules for Full Name, Email, and Password through utility functions.
+ * - **State Management:** Dispatches the `register` thunk and provides timed navigation to the login screen on success.
+ * * @component
+ * @requires react-redux
+ * @requires react-router-dom
+ * @requires react-hot-toast
+ * * @returns {React.JSX.Element} The Signup view with profile upload, form inputs, and animated background.
+ */
+
+/**
+ * @function handleImageSelect
+ * @description Converts the selected file into a Base64 string for immediate UI preview.
+ * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event.
+ */
+
+/**
+ * @function handleSignup
+ * @async
+ * @description
+ * Validates inputs and prepares the `FormData` payload for the API.
+ * 1. Validates text fields using `validateFields`.
+ * 2. Appends text and the optional profile picture to a `FormData` instance.
+ * 3. Dispatches the registration action and handles success/error toast notifications.
+ * @param {React.FormEvent} event - Submission event.
  */
 
 import React, { useState, useEffect, useRef } from "react";

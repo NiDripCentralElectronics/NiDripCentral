@@ -1,37 +1,26 @@
 /**
- * Button Component
- *
- * A customizable button component with support for:
- * - Variants (primary, secondary, danger, etc.)
- * - Loading state with spinner
- * - Optional icon
- * - Dynamic sizing (width, height)
- *
- * @component
- * @param {Object} props - Component props.
- * @param {function} props.onPress - Function triggered when the button is clicked.
- * @param {string} props.title - The text label of the button.
- * @param {boolean} [props.loading=false] - Whether to show a loading spinner inside the button.
+ * A customizable button component with support for variants, loading states, and icons.
+ * * @component
+ * @param {Object} props - The properties for the Button component.
+ * @param {string} props.title - The text label displayed on the button.
+ * @param {function} props.onPress - Event handler for button click events.
+ * @param {boolean} [props.loading=false] - If true, displays a loading spinner and hides the label/icon.
+ * @param {boolean} [props.disabled=false] - If true, prevents interaction and applies disabled styling.
+ * @param {string} [props.variant="btn-primary"] - The visual style variant (e.g., 'btn-primary', 'btn-secondary', 'btn-danger').
+ * @param {React.ReactNode} [props.icon] - An optional icon element to display before the text.
+ * @param {string|number} [props.width="auto"] - Custom width for the button (CSS value).
+ * @param {string|number} [props.height="auto"] - Custom height for the button (CSS value).
  * @param {Object} [props.style] - Inline style overrides for the button container.
- * @param {Object} [props.textStyle] - Inline style overrides for the button text.
- * @param {string|number} [props.width] - Custom width of the button (default: "auto").
- * @param {string|number} [props.height] - Custom height of the button (default: "auto").
- * @param {boolean} [props.disabled=false] - Disables the button when true.
- * @param {string} [props.variant="btn-primary"] - CSS variant class for styling (e.g., "btn-primary", "btn-secondary").
- * @param {React.ReactNode} [props.icon] - Optional icon displayed before the text.
- *
- * @example
- * // Primary button with icon
+ * @param {Object} [props.textStyle] - Inline style overrides for the button's internal label span.
+ * * @example
  * <Button
- *   title="Submit"
- *   onPress={() => console.log("Clicked")}
- *   variant="btn-primary"
- *   icon={<i className="fas fa-check"></i>}
+ * title="Save Changes"
+ * onPress={handleSave}
+ * variant="btn-primary"
+ * icon={<SaveIcon />}
  * />
- *
- * @example
- * // Loading button
- * <Button title="Loading..." loading={true} />
+ * * @example
+ * <Button title="Submitting..." loading={true} disabled={true} />
  */
 
 import Loader from "../Loader/Loader.utility.jsx";

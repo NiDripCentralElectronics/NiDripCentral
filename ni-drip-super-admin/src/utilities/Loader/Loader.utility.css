@@ -1,16 +1,14 @@
 /**
- * Loader Stylesheet
- *
- * Provides styles for the reusable Loader component.
- * The loader is a circular spinner used to indicate
- * background tasks such as loading data or submitting forms.
- *
- * Key features:
- * - Flexbox centering for the loader container
- * - Circular spinner with dual-colored borders
- * - Continuous spinning animation using keyframes
- *
- * Relies on design tokens from global.styles.css (colors, spacing).
+ * @file Loader.utility.css
+ * @module Styles/Loader
+ * @description
+ * Defines the animation and structural styles for the circular spinner.
+ * * **Visuals:**
+ * - Uses a dual-border technique to create the "gap" effect for rotation.
+ * - Leverages CSS Keyframes for a smooth, continuous 360-degree spin.
+ * - Utilizes flexbox for perfect centering within its parent container.
+ * * @requires ../../styles/global.styles.css
+ * @animation spin - 1s linear infinite rotation.
  */
 
 @import url("../../styles/global.styles.css");

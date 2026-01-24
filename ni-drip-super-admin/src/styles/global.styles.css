@@ -1,17 +1,20 @@
 /**
- * Global Theme Stylesheet
- *
- * This stylesheet defines the core design system of the project, 
- * including typography, colors, spacing, and responsive breakpoints. 
- * It establishes a consistent visual foundation for the UI 
- * by leveraging CSS custom properties (variables).
- *
- * Enhancements:
- * - Organized color palette (primary, secondary, etc.)
- * - Defined typography scale with responsive fallbacks
- * - Added spacing system for layout consistency
- * - Included accessibility-friendly contrast choices
- * - Responsive font scaling for different breakpoints
+ * @file global.styles.css
+ * @module Styles/Global
+ * @description 
+ * The project's central Design System and Theme configuration. 
+ * This file establishes a unified visual language through CSS Custom Properties.
+ * * **System Architecture:**
+ * - **Typography:** Implements the 'Inter' font family with a modular scale and responsive stepping.
+ * - **Color Palette:** Defines semantic tokens (Primary, Success, Error) and neutral scales.
+ * - **Layout Spacing:** Standardized spacing system (XS–XL) for consistent margins and padding.
+ * - **Surface Styles:** Global border-radius and shadow tokens for UI depth.
+ * - **Reset & Defaults:** Provides a modern CSS reset and sets base line-heights/aliasing.
+ * * **Responsive Logic:**
+ * - **Desktop (Default):** Base font size at 1rem.
+ * - **Tablet (<=1200px):** Scales base font down to --font-size-sm.
+ * - **Mobile (<=768px):** Scales base font down to --font-size-xs.
+ * * @requires Google Fonts (Inter)
  */
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");

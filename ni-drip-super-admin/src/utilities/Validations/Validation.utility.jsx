@@ -1,13 +1,10 @@
 /**
- * Validation Utilities
- *
- * Provides reusable validation functions for authentication,
- * event management, and general form handling.
- *
- * Features:
- * - Field-level validators (e.g., email, password, full name, etc.)
- * - Unified validation function to check multiple fields at once
- * - Utility to determine overall form validity
+ * @file Validation.utility.js
+ * @module Utilities/Validation
+ * @description
+ * A comprehensive suite of validation logic for form handling and data integrity.
+ * Includes individual field validators, regex-based security checks, and
+ * bulk validation processing for entire form objects.
  */
 
 /**

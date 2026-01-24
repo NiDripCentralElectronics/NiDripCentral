@@ -1,56 +1,34 @@
 /**
- * InputField Component
- *
- * A flexible and reusable input field component that supports:
- * - Standard text/password/email inputs with floating labels
- * - Dropdown (select) inputs
- * - Multiline textarea inputs
- *
- * Includes customizable props for styling, validation, and behavior.
- *
- * @component
- * @param {Object} props - Component props.
- * @param {string} [props.value] - Current value of the input field.
- * @param {function} props.onChange - Change handler for the input.
- * @param {string} [props.placeholder] - Placeholder text for the input.
- * @param {Object} [props.style] - Custom styles for the wrapper container.
- * @param {Object} [props.inputStyle] - Custom styles for the input element.
- * @param {boolean} [props.secureTextEntry=false] - If true, renders input type password.
- * @param {boolean} [props.editable=true] - Whether the input is editable.
- * @param {Array<{ value: string, label: string }>} [props.dropdownOptions] - Options for a dropdown input.
- * @param {string} [props.selectedValue] - Current value for dropdown selection.
- * @param {function} [props.onValueChange] - Change handler for dropdown selection.
- * @param {string} [props.bgColor] - Background color override for the input.
- * @param {string} [props.textColor] - Text color override for the input.
- * @param {string|number} [props.width] - Custom width for the input container.
- * @param {string} [props.label] - Floating label text or dropdown placeholder.
- * @param {string} [props.type="text"] - Input type (text, password, email, etc.).
- * @param {boolean} [props.fullWidth=false] - If true, input stretches full width.
- * @param {boolean} [props.required=false] - Whether input is required.
- * @param {boolean} [props.multiline=false] - If true, renders textarea.
- * @param {number} [props.rows=3] - Row count for textarea.
- *
+ * A versatile form component supporting text inputs, dropdowns, and textareas.
+ * * @component
  * @example
- * // Standard input with floating label
  * <InputField
- *   label="Email"
- *   type="email"
- *   value={email}
- *   onChange={(e) => setEmail(e.target.value)}
- *   required
+ * label="Username"
+ * value={name}
+ * onChange={(e) => setName(e.target.value)}
+ * icon={<UserIcon />}
  * />
- *
- * @example
- * // Dropdown input
- * <InputField
- *   label="Select Category"
- *   dropdownOptions={[
- *     { value: "coffee", label: "Coffee" },
- *     { value: "tea", label: "Tea" }
- *   ]}
- *   selectedValue={category}
- *   onValueChange={(e) => setCategory(e.target.value)}
- * />
+ * * @param {Object} props - Component properties.
+ * * @param {string} [props.label] - Floating label text or dropdown placeholder.
+ * @param {string|number} [props.value] - Current value for text/textarea inputs.
+ * @param {React.ChangeEventHandler} [props.onChange] - Callback triggered on text input change.
+ * @param {React.ReactNode} [props.icon] - Optional icon displayed as a prefix inside the input.
+ * * @param {string} [props.type="text"] - HTML input type (e.g., 'email', 'tel', 'password').
+ * @param {boolean} [props.secureTextEntry=false] - If true, masks input (shorthand for type="password").
+ * @param {boolean} [props.multiline=false] - If true, renders a <textarea> instead of an <input>.
+ * @param {number} [props.rows=3] - Number of visible text lines for multiline mode.
+ * * @param {Array<{value: string, label: string}>} [props.dropdownOptions] - Array of options to render a <select> menu.
+ * @param {string} [props.selectedValue] - The currently selected value for the dropdown.
+ * @param {React.ChangeEventHandler} [props.onValueChange] - Callback triggered on dropdown selection change.
+ * * @param {boolean} [props.editable=true] - If false, the input becomes read-only.
+ * @param {boolean} [props.required=false] - If true, applies HTML5 validation attribute.
+ * @param {boolean} [props.fullWidth=false] - If true, sets the input element width to 100%.
+ * * @param {string|number} [props.width] - Specific width for the outer wrapper container.
+ * @param {string} [props.bgColor] - Custom background color for the input field.
+ * @param {string} [props.textColor] - Custom color for the input text.
+ * @param {React.CSSProperties} [props.style] - Inline style overrides for the outer wrapper.
+ * @param {React.CSSProperties} [props.inputStyle] - Inline style overrides specifically for the input/select/textarea.
+ * * @returns {React.JSX.Element} The rendered input field container.
  */
 
 import "../../styles/global.styles.css";

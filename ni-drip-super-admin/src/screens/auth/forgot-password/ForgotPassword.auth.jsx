@@ -1,7 +1,22 @@
+/**
+ * @file ForgotPassword.auth.jsx
+ * @module Screens/Auth/ForgotPassword
+ * @description
+ * Password recovery screen for the Super Admin.
+ * * **Core Functionality:**
+ * - Captures user email with real-time validation.
+ * - Dispatches recovery requests to the backend via Redux Thunks.
+ * - Handles success/error feedback using `react-hot-toast`.
+ * - Features a high-fidelity CSS "Orbit" animation for the background hero.
+ * * @requires react-redux
+ * @requires react-router-dom
+ * @requires react-hot-toast
+ */
+
 import React, { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import "../../../styles/global.styles.css";
-import "./ForgotPassword.auth.css"; // Ensure you rename the CSS file or update the import
+import "./ForgotPassword.auth.css";
 import Logo from "../../../assets/logo/logo.png";
 import InputField from "../../../utilities/InputField/InputField.utility";
 import Button from "../../../utilities/Button/Button.utility";
@@ -43,7 +58,6 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      // Correct payload: email is a string
       const resultAction = await dispatch(
         forgotPassword({ email, role: "SUPERADMIN" }),
       );

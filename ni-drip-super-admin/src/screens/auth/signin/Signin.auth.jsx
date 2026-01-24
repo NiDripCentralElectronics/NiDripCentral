@@ -1,15 +1,30 @@
 /**
- * Signin Component
- *
- * Provides the authentication form for logging into the admin panel.
- * Includes input validation, error handling, and Redux-powered login action.
- * Redirects to the admin dashboard on successful login.
- *
- * @component
- * @example
- * return (
- *   <Signin />
- * )
+ * @file Signin.auth.jsx
+ * @module Screens/Auth/Signin
+ * @description 
+ * The primary Sign-in screen for Super Admins.
+ * * **Logic Features:**
+ * - **Form State Management:** Real-time validation for email and password fields.
+ * - **Redux Integration:** Dispatches the `login` thunk to verify credentials and update the global store.
+ * - **Security Feedback:** Handles specific HTTP status codes (e.g., 423 Locked) to inform users about too many failed attempts or account locks.
+ * - **Persistence:** On success, redirects the user to the Admin Dashboard.
+ * * @component
+ * @requires react-redux
+ * @requires react-router-dom
+ * @requires react-hot-toast
+ * * @returns {React.JSX.Element} The rendered Signin screen with its responsive grid and orbital animations.
+ */
+
+/**
+ * @function handleSignin
+ * @async
+ * @description 
+ * Orchestrates the login workflow.
+ * 1. Prevents default form reload.
+ * 2. Runs bulk validation using `validateFields`.
+ * 3. Dispatches `login` and calculates "Remaining Attempts" from backend metadata if the request fails.
+ * 4. Triggers success toast and navigates to the dashboard after a 2-second delay.
+ * @param {React.FormEvent} event - The form submission event.
  */
 
 import React, { useState, useEffect } from "react";
