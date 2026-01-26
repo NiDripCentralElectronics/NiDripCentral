@@ -61,7 +61,6 @@ const Splash = () => {
 
   return (
     <View style={styles.container}>
-      {/* Deep gradient background with subtle shift */}
       <Animatable.View
         animation="fadeIn"
         duration={3000}
@@ -75,7 +74,6 @@ const Splash = () => {
         />
       </Animatable.View>
 
-      {/* Multiple layered glowing orbs for depth */}
       <Animatable.View
         animation="glowPulse"
         iterationCount="infinite"
@@ -91,7 +89,6 @@ const Splash = () => {
       />
 
       <View style={styles.content}>
-        {/* Main Logo - Epic Entrance */}
         <Animatable.View
           animation="epicEntrance"
           duration={2400}
@@ -107,7 +104,6 @@ const Splash = () => {
             resizeMode="contain"
           />
 
-          {/* Subtle floating after entrance */}
           <Animatable.View
             animation={{
               0: { translateY: 0 },
@@ -121,9 +117,7 @@ const Splash = () => {
           />
         </Animatable.View>
 
-        {/* Text Section - Staggered Luxury Reveal */}
         <View style={styles.textWrapper}>
-          {/* Gradient Line Reveal */}
           <Animatable.View
             animation="lineReveal"
             duration={1200}
@@ -145,7 +139,6 @@ const Splash = () => {
             />
           </Animatable.View>
 
-          {/* Tagline - Slow dramatic fade up */}
           <Animatable.Text
             animation="fadeInUp"
             duration={1400}
@@ -154,18 +147,7 @@ const Splash = () => {
             style={styles.tagline}
           >
             ELECTRONICS & APPLIANCES
-          </Animatable.Text>
-
-          {/* Brand Name - Final powerful reveal */}
-          <Animatable.Text
-            animation="fadeIn"
-            duration={1600}
-            delay={3600}
-            useNativeDriver
-            style={styles.brandName}
-          >
-            NI DRIP CENTRAL
-          </Animatable.Text>
+          </Animatable.Text>         
         </View>
       </View>
     </View>
@@ -231,16 +213,5 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.85)',
     letterSpacing: SCREEN_WIDTH * 0.02,
     textAlign: 'center',
-  },
-
-  brandName: {
-    marginTop: theme.spacing(4),
-    fontFamily: theme.typography.inter.bold,
-    fontSize: theme.typography.fontSize['2xl'],
-    color: theme.colors.white,
-    letterSpacing: SCREEN_WIDTH * 0.01,
-    textShadowColor: theme.colors.primary + '60',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 20,
-  },
+  }, 
 });
