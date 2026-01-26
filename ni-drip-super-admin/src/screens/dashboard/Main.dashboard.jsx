@@ -21,6 +21,7 @@ import Card from "../../utilities/card/Card.utility";
 import { getAllProducts } from "../../redux/slices/product.slice";
 import { getAllTickets } from "../../redux/slices/support.slice";
 import { getAllUsers } from "../../redux/slices/user.slice";
+import {getAllOrders} from '../../redux/slices/order.slice'
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -30,14 +31,18 @@ const Main = () => {
   const products = useSelector((state) => state.products.products || []);
   const support = useSelector((state) => state.support.allTickets || []);
   const allUsers = useSelector((state) => state.users.allUsers || []);
+  const allOrders = useSelector((state) => state.orders.allOrders || []);
 
   useEffect(() => {
     if (user?.id) {
       dispatch(getAllProducts());
       dispatch(getAllTickets());
       dispatch(getAllUsers());
+      dispatch(getAllOrders());
     }
   }, [dispatch, user?.id]);
+
+  console.log('ORDERs', allOrders)
 
   const productStats = useMemo(() => {
     return {
@@ -61,6 +66,12 @@ const Main = () => {
     };
   }, [allUsers]);
 
+  const orderStats = useMemo(() => {
+    return {
+      totalOrders: allOrders.length,
+    };
+  }, [allOrders]);
+
   const handleNavigateProducts = () =>
     navigate("/super-admin/products/manage-products");
 
@@ -71,6 +82,8 @@ const Main = () => {
     navigate("/super-admin/support/manage-support-tickets");
 
   const handleNavigateUsers = () => navigate("/super-admin/users/manage-users");
+
+  const handleNavigateOrders = () => navigate("/super-admin/orders/manage-orders");
 
   return (
     <section id="dashboard">
@@ -132,6 +145,18 @@ const Main = () => {
               mainValue={userStats.totalUsers}
               accentColor="#ee43d7"
               onClick={handleNavigateUsers}
+              hoverEffect={true}
+              size="small"
+            />
+          </div>
+
+          <div className="col-6 col-md-4 col-lg-4">
+            <Card
+              title="Total Orders"
+              icon={<i className="fas fa-shopping-bag" />}
+              mainValue={orderStats.totalOrders}
+              accentColor="#43eed1"
+              onClick={handleNavigateOrders}
               hoverEffect={true}
               size="small"
             />

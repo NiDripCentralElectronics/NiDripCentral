@@ -43,7 +43,12 @@ const Sidebar = () => {
 
   const navItems = [
     { name: "Dashboard", path: "/super-admin", icon: "fas fa-home" },
-     {
+    {
+      name: "Manage Orders",
+      path: "/super-admin/orders/manage-orders",
+      icon: "fas fa-shopping-bag",
+    },
+    {
       name: "Manage Customers",
       path: "/super-admin/users/manage-users",
       icon: "fas fa-users",

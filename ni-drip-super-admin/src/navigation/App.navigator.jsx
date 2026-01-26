@@ -25,6 +25,10 @@ import ResetPassword from "../screens/auth/reset-password/ResetPassword.auth";
 // Dashboard
 import Dashboard from "../screens/dashboard/Main.dashboard";
 
+// Orders Management
+import Orders from "../screens/manage-orders/orders/Orders";
+import OrderDetails from "../screens/manage-orders/order-details/OrderDetails";
+
 // Users Management
 import Users from "../screens/manage-users/users/Users";
 import UserDetails from "../screens/manage-users/user-details/UserDetails";
@@ -41,9 +45,11 @@ import Inventory from "../screens/manage-inventory/Inventory";
 // Reviews Management
 import Reviews from "../screens/manage-reviews/Reviews";
 
+// Support Tickets Management
+import SupportTickets from "../screens/manage-support-tickets/SupportTickets";
+
 // Not Found
 import NotFound from "../screens/not-found/Not-Found";
-import SupportTickets from "../screens/manage-support-tickets/SupportTickets";
 
 /**
  * Application routing configuration.
@@ -73,6 +79,13 @@ const AppNavigator = () => {
 
         {/* Dashboard Routes */}
         <Route path="dashboard" element={<Dashboard />} />
+
+        {/* Orders Management */}
+        <Route path="orders/manage-orders" element={<Orders />} />
+        <Route
+          path="orders/manage-orders/order-details/:orderId"
+          element={<OrderDetails />}
+        />
 
         {/* Users Management */}
         <Route path="users/manage-users" element={<Users />} />

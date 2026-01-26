@@ -1,0 +1,287 @@
+/**
+ * @file OrderDetails.css
+ * @description 
+ * Styling for the Order Details interface, prioritizing elegance, professionalism, and intuitive information flow.
+ * **Key Design Patterns:**
+ * - **Header Gradient:** Applies a subtle linear gradient to the banner for a premium, depth-enhanced appearance.
+ * - **Bento Metrics:** Utilizes harmonious color palettes (.color1 to .color4) with refined borders and typography for executive-level clarity.
+ * - **Sticky Visuals:** Maintains `position: sticky` for the visuals column, ensuring key imagery remains accessible during scrolls.
+ * - **Item Cards:** Crafts sleek, shadow-elevated cards with integrated thumbnails for a polished, e-commerce-inspired layout.
+ * - **Timeline Visualization:** Employs a clean, vertical timeline with dotted connectors for temporal progression.
+ * - **Thumbnail Interactions:** Enhances with smooth scaling and glow effects on hover/active states.
+ * **Responsive Strategy:**
+ * - Transitions to a single-column layout below 900px, with adjusted padding and font scaling for mobile elegance.
+ */
+
+@import url("../../../styles/global.styles.css");
+
+#order-details-screen {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  background: linear-gradient(to bottom, #f9fafb, #ffffff);
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+}
+
+#order-details-screen .od-header-banner {
+  margin-bottom: 40px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff, #f3f4f6);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+#order-details-screen .back-nav {
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: color 0.2s ease;
+}
+
+#order-details-screen .back-nav:hover {
+  color: darken(var(--primary), 10%);
+}
+
+#order-details-screen .header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+#order-details-screen .order-main-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--dark);
+  line-height: 1.2;
+}
+
+#order-details-screen .od-status-pill {
+  padding: 6px 16px;
+  border-radius: 30px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--secondary);
+  color: white;
+}
+
+#order-details-screen .od-main-grid {
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 50px;
+  align-items: start;
+}
+
+#order-details-screen .od-visuals {
+  position: sticky;
+  top: 100px;
+}
+
+#order-details-screen .od-main-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 25px;
+  border: 1px solid var(--gray-light);
+  box-shadow: var(--shadow-md);
+}
+
+#order-details-screen .od-hero-img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+}
+
+#order-details-screen .od-thumbnails {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+#order-details-screen .od-thumb {
+  width: 65px;
+  height: 65px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--gray-light);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+#order-details-screen .od-thumb.active {
+  border-color: var(--primary);
+  transform: scale(1.05);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+#order-details-screen .od-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#order-details-screen .od-content {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+#order-details-screen .section-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-left: 4px solid var(--primary);
+  padding-left: 12px;
+  margin-bottom: 16px;
+  color: var(--dark);
+}
+
+#order-details-screen .metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+#order-details-screen .metric-item {
+  padding: 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+#order-details-screen .metric-item label {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.6;
+}
+
+#order-details-screen .metric-item span {
+  font-size: 20px;
+  font-weight: 800;
+  display: block;
+  margin-top: 6px;
+}
+
+#order-details-screen .metric-item.color1 {
+  background: linear-gradient(to bottom, #fff8f0, #fff3e0);
+  border-color: #ffe0b2;
+}
+#order-details-screen .metric-item.color2 {
+  background: linear-gradient(to bottom, #f0fdf4, #dcfce7);
+  border-color: #c8e6c9;
+}
+#order-details-screen .metric-item.color3 {
+  background: linear-gradient(to bottom, #eff6ff, #dbeafe);
+  border-color: #bbdefb;
+}
+#order-details-screen .metric-item.color4 {
+  background: linear-gradient(to bottom, #fdf2f8, #fce7f3);
+  border-color: #f8bbd0;
+}
+
+#order-details-screen .info-box,
+#order-details-screen .timeline-box {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-light);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#order-details-screen .info-row,
+#order-details-screen .timeline-item {
+  display: flex;
+  flex-direction: column;
+}
+
+#order-details-screen .info-row small,
+#order-details-screen .timeline-item small {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+#order-details-screen .info-row p,
+#order-details-screen .timeline-item p {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+  color: #333;
+}
+
+#order-details-screen .items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#order-details-screen .item-card {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-light);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s ease;
+}
+
+#order-details-screen .item-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+#order-details-screen .item-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin-right: 20px;
+}
+
+#order-details-screen .item-details {
+  flex: 1;
+}
+
+#order-details-screen .item-details h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+#order-details-screen .item-details p {
+  font-size: 13px;
+  color: #555;
+  margin: 4px 0;
+}
+
+@media (max-width: 900px) {
+  #order-details-screen .od-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #order-details-screen .od-visuals {
+    position: static;
+  }
+
+  #order-details-screen .item-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #order-details-screen .item-thumb {
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+}

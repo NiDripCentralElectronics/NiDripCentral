@@ -139,15 +139,14 @@ const Products = () => {
         </div>
 
         <div className="stats-grid">
-          <div className="stat-card">
+          <div className="stat-card stat-total">
             <h3>Total Products</h3>
-            <p>{stats.total}</p>
+            <p className="stat-value">{stats.total.toLocaleString()}</p>
           </div>
-
-          <div className="stat-card">
+          <div className="stat-card stat-active">
             <h3>Active</h3>
-            <p>{stats.active}</p>
-          </div>
+            <p className="stat-value">{stats.active}</p>
+          </div>          
 
           <div className="btn-container">
             <Button

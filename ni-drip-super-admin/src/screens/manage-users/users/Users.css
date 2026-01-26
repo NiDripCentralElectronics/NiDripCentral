@@ -31,31 +31,55 @@
 
 #users .stats-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
   margin-bottom: 30px;
 }
 
 #users .stat-card {
-  background: var(--white);
   padding: 20px;
   border-radius: 12px;
-  text-align: center;
+  text-align: left;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--gray);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+#users .stat-total {
+  background-color: var(--white);
+}
+
+#users .stat-verified {
+  background-color: #ebfbee;
+  border-color: #d3f9d8;
+}
+
+#users .stat-unverified {
+  background-color: #fff5f5;
+  border-color: #ffe3e3;
+}
+
+#users .stat-verified .stat-value {
+  color: #2b8a3e;
+}
+#users .stat-unverified .stat-value {
+  color: #c92a2a;
 }
 
 #users .stat-card h3 {
-  font-size: 14px;
-  color: var(--dark);
+  font-size: 11px;
+  color: #666;
   margin-bottom: 8px;
   text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
 
-#users .stat-card p {
+#users .stat-value {
   font-size: 24px;
   font-weight: 800;
   margin: 0;
+  color: var(--dark);
 }
 
 #users .btn-container {

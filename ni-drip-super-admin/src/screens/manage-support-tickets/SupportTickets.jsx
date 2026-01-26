@@ -41,8 +41,7 @@ const SupportTicket = () => {
   const [deleting, setDeleting] = useState(false);
 
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-  const [updatingStatus, setUpdatingStatus] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [updatingStatus, setUpdatingStatus] = useState(false);  
 
   const actionButtonRefs = useRef({});
 
@@ -185,27 +184,27 @@ const SupportTicket = () => {
         </div>
 
         <div className="stats-grid">
-          <div className="stat-card">
+          <div className="stat-card stat-total">
             <h3>Total Tickets</h3>
             <p>{stats.total}</p>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-open">
             <h3>Open</h3>
             <p>{stats.open}</p>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-in-progress">
             <h3>InProgress</h3>
             <p>{stats.in_progress}</p>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-resolved">
             <h3>Resolved</h3>
             <p>{stats.resolved}</p>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-closed">
             <h3>Closed</h3>
             <p>{stats.closed}</p>
           </div>

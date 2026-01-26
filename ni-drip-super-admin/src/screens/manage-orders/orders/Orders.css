@@ -1,0 +1,218 @@
+/**
+ * @file Orders.css
+ * @description 
+ * Layout definitions for the Orders Grid and Data Table.
+ * * **Design Patterns:**
+ * - **Stats Grid:** A 3-column responsive layout for high-level order data.
+ * - **Status Badging:** Conditional CSS classes (`.processing`, `.refunded`) for immediate status recognition.
+ * - **Table Scoping:** Uses `table-responsive` to ensure the management grid remains navigable on mobile devices.
+ * - **PopOver Anchoring:** Manages the relative positioning required for contextual action menus.
+ */
+
+@import url("../../../styles/global.styles.css");
+
+#orders .orders-container {
+  padding: 20px;
+}
+
+#orders .orders-breadcrumb {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+#orders .orders-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+#orders .orders-subtitle {
+  color: var(--dark);
+  opacity: 0.7;
+  margin-top: 5px;
+}
+
+#orders .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+#orders .stat-card {
+  padding: 20px;
+  border-radius: 12px;
+  text-align: left;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+#orders .stat-total {
+  background-color: var(--white);
+}
+
+#orders .stat-total {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+}
+
+#orders .stat-pending {
+  background-color: #fff4e6;
+  border-color: #ffd8a8;
+}
+
+#orders .stat-processing {
+  background-color: #e7f5ff;
+  border-color: #a5d8ff;
+}
+
+#orders .stat-shipped {
+  background-color: #f3f0ff;
+  border-color: #cc5de8;
+}
+
+#orders .stat-delivered {
+  background-color: #ebfbee;
+  border-color: #8ce99a;
+}
+
+#orders .stat-refunded {
+  background-color: #fff5f5;
+  border-color: #ffa8a8;
+}
+
+#orders .stat-total .stat-value {
+  color: #1f2937;
+}
+
+#orders .stat-pending .stat-value {
+  color: #e8590c;
+}
+
+#orders .stat-processing .stat-value {
+  color: #1971c2;
+}
+
+#orders .stat-shipped .stat-value {
+  color: #862e9c;
+}
+
+#orders .stat-delivered .stat-value {
+  color: #2b8a3e;
+}
+
+#orders .stat-refunded .stat-value {
+  color: #c92a2a;
+}
+#orders .stat-card h3 {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+#orders .stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--dark);
+}
+
+#orders .status-pill {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: capitalize;
+}
+
+#orders .status-pending {
+  background: #fff4e6;
+  color: #d9480f;
+}
+#orders .status-processing {
+  background: #e7f5ff;
+  color: #1971c2;
+}
+#orders .status-shipped {
+  background: #f3f0ff;
+  color: #6741d9;
+}
+#orders .status-delivered {
+  background: #ebfbee;
+  color: #2b8a3e;
+}
+#orders .status-refunded {
+  background: #fff5f5;
+  color: #c92a2a;
+}
+
+#orders .table-card {
+  background: var(--white);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--gray);
+}
+
+#orders .custom-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#orders .custom-table th {
+  padding: 15px;
+  border-bottom: 1px solid var(--gray);
+  color: var(--dark);
+  font-weight: 600;
+}
+
+#orders .custom-table td {
+  padding: 15px;
+  border-bottom: 1px solid var(--gray);
+  vertical-align: middle;
+}
+
+#orders .order-total,
+.order-id {
+  font-weight: 700;
+}
+
+#orders .action-dots-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--dark);
+  font-size: 16px;
+  padding: 5px;
+  margin-left: 20px;
+}
+
+@media (max-width: 1024px) {
+  #orders .stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  #orders .orders-breadcrumb {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  #orders .search-wrapper,
+  #orders .search-wrapper > div {
+    width: 100% !important;
+  }
+
+  #orders .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

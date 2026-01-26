@@ -91,17 +91,17 @@ const Users = () => {
         </div>
 
         <div className="stats-grid">
-          <div className="stat-card">
+          <div className="stat-card stat-total">
             <h3>Total Users</h3>
             <p>{stats.total}</p>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-verified">
             <h3>Verified Users</h3>
             <p>{stats.verified}</p>
           </div>
 
-          <div className="stat-card">
+          <div className="stat-card stat-unverified">
             <h3>Not Verified Users</h3>
             <p>{stats.unverified}</p>
           </div>

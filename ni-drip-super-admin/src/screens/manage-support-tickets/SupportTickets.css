@@ -33,35 +33,81 @@
   color: var(--dark);
 }
 
-/* 5-Column Grid for Ticket Stats */
 #support-ticket .stats-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 15px;
   margin-bottom: 30px;
 }
 
 #support-ticket .stat-card {
-  background: var(--white);
   padding: 20px;
   border-radius: 12px;
-  border: 1px solid var(--gray);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-  text-align: center;
+  text-align: left;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+#support-ticket .stat-total {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+}
+
+#support-ticket .stat-open {
+  background-color: #fff4e6;
+  border-color: #ffd8a8;
+}
+
+#support-ticket .stat-in-progress {
+  background-color: #e7f5ff;
+  border-color: #a5d8ff;
+}
+
+#support-ticket .stat-resolved {
+  background-color: #ebfbee;
+  border-color: #8ce99a;
+}
+
+#support-ticket .stat-closed {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+#support-ticket .stat-total .stat-value {
+  color: #1f2937;
+}
+
+#support-ticket .stat-open .stat-value {
+  color: #e8590c;
+}
+
+#support-ticket .stat-in-progress .stat-value {
+  color: #1971c2;
+}
+
+#support-ticket .stat-resolved .stat-value {
+  color: #2b8a3e;
+}
+
+#support-ticket .stat-closed .stat-value {
+  color: #495057;
 }
 
 #support-ticket .stat-card h3 {
-  font-size: 0.8rem;
-  color: var(--dark);
+  font-size: 11px;
+  color: #666;
   margin-bottom: 8px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
 
-#support-ticket .stat-card p {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary);
+#support-ticket .stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--dark);
 }
 
 #support-ticket .table-card {
@@ -105,7 +151,6 @@
   font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
-
 }
 
 #support-ticket .status-badge.open {
