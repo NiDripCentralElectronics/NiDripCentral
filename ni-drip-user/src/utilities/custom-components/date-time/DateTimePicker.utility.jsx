@@ -1,33 +1,26 @@
 /**
- * Cross-platform Date & Time picker field (iOS spinner + Android modal)
- * Displays a formatted value in a touchable field, shows picker when tapped
+ * @file DateTimePicker.jsx
+ * @module Components/DateTimePicker
+ * @description
+ * Cross-platform date & time picker input field with consistent look & feel.
  *
- * @param {Object} props
- * @param {string} props.label                  - Field label (e.g. "Event Date & Time")
- * @param {Date} [props.value]                  - Currently selected date/time
- * @param {string} [props.placeholder="Select date & time"]
- * @param {boolean} props.show                  - Controls visibility of the picker (usually managed by parent with useState)
- * @param {() => void} props.onPress            - Called when user taps the field → should set show(true)
- * @param {(event: any, date?: Date) => void} props.onChange - Called when user confirms/cancels picker
- * @param {'date' | 'time' | 'datetime'} [props.mode='datetime']
- * @param {Date} [props.minimumDate]            - Earliest selectable date
- * @param {Date} [props.maximumDate]            - Latest selectable date (added)
- * @param {string} [props.error]                - Error message to show below field
- * @param {string} [props.dateFormat]           - Optional custom format string (uses date-fns format if provided)
- * @param {() => void} [props.onClear]          - Optional callback for clear button (Android/iOS)
+ * Features:
+ * - Touchable field showing formatted selected value or placeholder
+ * - iOS: native spinner style inside the modal
+ * - Android: native modal picker (date → time sequence for datetime mode)
+ * - Unified styling matching app theme (borders, colors, typography, elevation)
+ * - Supports date / time / datetime modes
+ * - Minimum & maximum date constraints
+ * - Error message display below field
+ * - Safe date handling with fallback to current date
+ * - Clean placeholder behavior and accent color integration
  */
+
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  Platform,
-} from 'react-native';
+import { View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { theme } from '../../../styles/Themes';
 
-// Optional: better formatting (you can keep toLocaleString or switch to date-fns)
 const formatDateTime = (date, mode = 'datetime') => {
   if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
     return '';
@@ -48,7 +41,6 @@ const formatDateTime = (date, mode = 'datetime') => {
         minute: '2-digit',
       });
     }
-    // datetime
     return date.toLocaleString('en-US', {
       month: 'short',
       day: 'numeric',
@@ -59,7 +51,7 @@ const formatDateTime = (date, mode = 'datetime') => {
     });
   } catch (err) {
     console.warn('Date formatting failed:', err);
-    return date.toISOString().split('T')[0]; // fallback
+    return date.toISOString().split('T')[0];
   }
 };
 
@@ -78,7 +70,6 @@ export const DateTimePicker = ({
 }) => {
   const formattedValue = formatDateTime(value, mode);
 
-  // Safe guards for dates
   const safeValue =
     value instanceof Date && !isNaN(value.getTime()) ? value : new Date();
   const safeMinDate =
@@ -91,18 +82,14 @@ export const DateTimePicker = ({
       : undefined;
 
   const handleChange = (event, selectedDate) => {
-    // On Android, clicking Cancel gives event.type = 'dismissed'
     if (Platform.OS === 'android' && event.type === 'dismissed') {
       onChange?.(event, undefined);
       return;
     }
 
-    // On iOS, user can keep changing → we usually call onChange only on confirm
-    // But common pattern is to call on every change and let parent decide
     onChange?.(event, selectedDate);
   };
 
-  // Android datetime → show date first, then time after date is picked
   const androidMode = mode === 'datetime' ? 'date' : mode;
 
   return (
@@ -138,7 +125,7 @@ export const DateTimePicker = ({
           neutralButtonLabel={Platform.OS === 'android' ? 'Cancel' : undefined}
           positiveButton={{ label: 'OK', textColor: theme.colors.primary }}
           negativeButton={{ label: 'Cancel', textColor: theme.colors.gray }}
-          themeVariant="light" // or "dark" / "auto" — iOS 14+
+          themeVariant="light"
         />
       )}
 
@@ -172,14 +159,14 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
     fontSize: theme.typography.fontSize.sm,
     color: theme.colors.dark,
     flex: 1,
   },
 
   valueText: {
-    fontFamily: theme.typography.inter.semiBold,
+    fontFamily: theme.typography.semiBold,
     fontSize: theme.typography.fontSize.md,
     color: theme.colors.primary,
     textAlign: 'right',
@@ -188,7 +175,7 @@ const styles = StyleSheet.create({
 
   placeholderText: {
     color: theme.colors.gray,
-    fontFamily: theme.typography.inter.regular,
+    fontFamily: theme.typography.regular,
   },
 
   errorMessage: {
@@ -196,6 +183,6 @@ const styles = StyleSheet.create({
     marginLeft: theme.spacing(2.5),
     color: theme.colors.error,
     fontSize: theme.typography.fontSize.xs,
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
   },
 });

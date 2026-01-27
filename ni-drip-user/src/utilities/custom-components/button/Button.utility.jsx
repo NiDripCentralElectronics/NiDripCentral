@@ -1,27 +1,23 @@
 /**
- * @component Button
- * @description A highly customizable and responsive button component using the application's design system.
- * Supports linear gradient backgrounds for primary/colored buttons.
+ * @file Button.jsx
+ * @module Components/Button
+ * @description
+ * Highly customizable, theme-consistent button component with support for:
+ * - Solid color or linear gradient backgrounds
+ * - Loading state with centered ActivityIndicator
+ * - Disabled state with visual feedback
+ * - Optional Feather icon (left or right position)
+ * - Custom width, text/icon colors, elevation/shadows
+ * - Gradient direction and advanced LinearGradient props
  *
- * @param {Object} props
- * @param {() => void} props.onPress - Function to call on button press.
- * @param {string} props.title - The text to display inside the button.
- * @param {boolean} [props.loading=false] - If true, shows an ActivityIndicator.
- * @param {import('react-native').ViewStyle} [props.style] - Custom styles for the button container.
- * @param {import('react-native').TextStyle} [props.textStyle] - Custom styles for the button text.
- * @param {number|string} [props.width] - Set a specific width for the button ('100%', number, or undefined).
- * @param {boolean} [props.disabled=false] - If true, disables interaction and grays out the button.
- * @param {string} [props.backgroundColor] - Override solid background color (disables gradient when set).
- * @param {string[]} [props.gradientColors] - Array of 2–3 colors for linear gradient (e.g. [theme.colors.primary, '#d81b60']).
- * @param {string} [props.textColor=theme.colors.white] - Color of the text and icon.
- * @param {string} [props.iconName] - Name of the Feather icon to display.
- * @param {number} [props.iconSize=20] - Size of the icon.
- * @param {string} [props.iconColor] - Override color for the icon specifically.
- * @param {import('react-native').ViewStyle} [props.iconStyle] - Custom styles for the icon wrapper.
- * @param {'left' | 'right'} [props.iconPosition='left'] - Position of the icon relative to the text.
- * @param {keyof typeof theme.elevation} [props.elevation] - Apply a specific shadow depth from theme.
- * @param {Object} [props.gradientProps] - Extra props passed to LinearGradient (start, end, locations, angle, etc.)
+ * Automatically falls back to solid background when:
+ * - Button is disabled
+ * - Explicit backgroundColor is provided
+ * - No valid gradientColors array is given
+ *
+ * Uses app-wide theme for colors, spacing, typography, gaps and elevation levels
  */
+
 import React from 'react';
 import {
   View,
@@ -128,12 +124,13 @@ const Button = ({
         activeOpacity={0.8}
         style={StyleSheet.absoluteFillObject}
       >
-        {/* Center content */}
         <View style={styles.centerContent}>{content}</View>
       </TouchableOpacity>
     </LinearGradient>
   );
 };
+
+export default Button;
 
 const styles = StyleSheet.create({
   iconBase: {
@@ -146,5 +143,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-export default Button;

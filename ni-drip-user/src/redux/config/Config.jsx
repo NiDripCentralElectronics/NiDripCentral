@@ -2,14 +2,16 @@
  * @file Config.utility.js
  * @module Core/Configuration
  * @description
- * Centralized Application Configuration Manager.
- * * This module serves as the single source of truth for environment-specific
- * variables and external service endpoints. It facilitates seamless switching
- * between development (local) and production (cloud) environments.
- * * **Key Values:**
- * - **BACKEND_API_URL:** The base endpoint for all RESTful API communications.
- * * @constant {Object} CONFIG
- * @property {string} BACKEND_API_URL - The base URL used by services to communicate with the backend.
+ * Single source of truth for environment-specific application configuration.
+ *
+ * Centralizes critical settings such as:
+ * - Backend API base URL (switches between local development and production environments)
+ * - Future extensibility for other service endpoints, feature flags, or app constants
+ *
+ * Usage pattern:
+ * - Import and use CONFIG.BACKEND_API_URL in all API service layers
+ * - Easily toggle between local dev server and deployed production backend
+ *   by commenting/uncommenting the appropriate line
  */
 
 const CONFIG = {

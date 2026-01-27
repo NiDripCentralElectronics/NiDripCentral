@@ -1,31 +1,70 @@
 /**
  * @file Splash.jsx
- * @module components/Splash
+ * @module Components/Splash
  * @description
- * NI DRIP CENTRAL: Ultra-Premium Cinematic Splash Screen (2026 Edition).
- * * This component provides a high-fidelity visual experience during application launch:
- * - **Background Layering**: Implements a deep multi-tone gradient with dynamic, pulsing atmospheric glowing orbs for visual depth.
- * - **Logo Choreography**: Features a physics-based "Epic Entrance" (scale, rotation, and translation) followed by a persistent floating idle animation.
- * - **Staggered Typography**: Utilizes a synchronized reveal sequence including a center-out gradient line reveal, followed by the tagline and brand title.
- * - **Theme Integration**: Custom electronics-inspired palette using primary and secondary brand colors.
- * * @component
- * @returns {JSX.Element} The rendered animated splash screen view.
+ * Premium cinematic splash screen for NI DRIP CENTRAL (2026 edition).
+ *
+ * Delivers an immersive launch experience with:
+ * - Multi-layer animated gradient background
+ * - Atmospheric glowing orbs with slow pulsing animation
+ * - Physics-inspired logo entrance (scale, bounce, rotation)
+ * - Persistent gentle floating idle animation on logo
+ * - Staggered text reveal sequence: gradient line separator → tagline
+ * - Full theme integration using brand primary/secondary colors
+ * - Status bar customization for light-content appearance
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, StatusBar, Dimensions, Text } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import LinearGradient from 'react-native-linear-gradient';
 import { theme } from '../../styles/Themes';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from 'react-redux';
+import { checkAuth } from '../../redux/slices/auth.slice';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('screen');
+const { width } = Dimensions.get('screen');
 
 const Splash = () => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     StatusBar.setBarStyle('light-content');
     StatusBar.setTranslucent(true);
     StatusBar.setBackgroundColor('transparent');
   }, []);
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        const result = await dispatch(checkAuth()).unwrap();
+
+        if (result.isAuthenticated) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Main' }],
+          });
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'OnBoarding' }],
+          });
+        }
+      } catch (error) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'OnBoarding' }],
+        });
+      } finally {
+      }
+    };
+
+    initializeAuth();
+  }, [dispatch, navigation]);
 
   Animatable.initializeRegistryWithDefinitions({
     epicEntrance: {
@@ -147,7 +186,7 @@ const Splash = () => {
             style={styles.tagline}
           >
             ELECTRONICS & APPLIANCES
-          </Animatable.Text>         
+          </Animatable.Text>
         </View>
       </View>
     </View>
@@ -161,21 +200,21 @@ const styles = StyleSheet.create({
 
   glow1: {
     position: 'absolute',
-    top: SCREEN_WIDTH * 0.1,
-    left: -SCREEN_WIDTH * 0.3,
-    width: SCREEN_WIDTH * 1.4,
-    height: SCREEN_WIDTH * 1.4,
-    borderRadius: SCREEN_WIDTH * 0.7,
+    top: width * 0.1,
+    left: -width * 0.3,
+    width: width * 1.4,
+    height: width * 1.4,
+    borderRadius: width * 0.7,
     backgroundColor: '#ffffff18',
   },
 
   glow2: {
     position: 'absolute',
-    bottom: -SCREEN_WIDTH * 0.4,
-    right: -SCREEN_WIDTH * 0.2,
-    width: SCREEN_WIDTH * 1.2,
-    height: SCREEN_WIDTH * 1.2,
-    borderRadius: SCREEN_WIDTH * 0.6,
+    bottom: -width * 0.4,
+    right: -width * 0.2,
+    width: width * 1.2,
+    height: width * 1.2,
+    borderRadius: width * 0.6,
     backgroundColor: theme.colors.primary + '30',
   },
 
@@ -190,8 +229,8 @@ const styles = StyleSheet.create({
   },
 
   logo: {
-    width: SCREEN_WIDTH * 0.65,
-    height: SCREEN_WIDTH * 0.45,
+    width: width * 0.65,
+    height: width * 0.45,
   },
 
   textWrapper: { alignItems: 'center' },
@@ -203,15 +242,15 @@ const styles = StyleSheet.create({
   },
 
   separator: {
-    height: SCREEN_WIDTH * 0.01,
-    width: SCREEN_WIDTH * 0.5,
+    height: width * 0.01,
+    width: width * 0.5,
   },
 
   tagline: {
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
     fontSize: theme.typography.fontSize.lg,
     color: 'rgba(255,255,255,0.85)',
-    letterSpacing: SCREEN_WIDTH * 0.02,
+    letterSpacing: width * 0.02,
     textAlign: 'center',
-  }, 
+  },
 });

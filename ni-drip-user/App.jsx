@@ -1,3 +1,21 @@
+/**
+ * @file App.js
+ * @module App
+ * @description
+ * Root entry point of the React Native application.
+ *
+ * Serves as the top-level component responsible for:
+ * - Mounting the primary navigation structure via {@link RootNavigator}
+ * - Initializing the global toast notification system (react-native-toast-message)
+ *   with custom styling aligned to the application's design system
+ *
+ * Features custom success & error toasts with:
+ * - Branded colors from the theme
+ * - Responsive sizing based on screen width
+ * - Consistent typography, spacing, border radius and shadow styling
+ * - Custom leading icons using MaterialCommunityIcons
+ */
+
 import React from 'react';
 import { Dimensions } from 'react-native';
 import RootNavigator from './src/navigation/RootNavigator';

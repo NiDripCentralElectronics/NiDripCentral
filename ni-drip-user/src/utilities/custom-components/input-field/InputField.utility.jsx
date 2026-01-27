@@ -1,26 +1,21 @@
 /**
- * Reusable Input Field component
- * Supports both normal TextInput and Dropdown (DropDownPicker)
+ * @file InputField.jsx
+ * @module Components/InputField
+ * @description
+ * Reusable, theme-consistent input field component that supports:
+ * - Standard TextInput (single-line or multiline)
+ * - Password fields with secure text toggle
+ * - Dropdown picker using react-native-dropdown-picker
  *
- * @param {Object} props
- * @param {string} [props.value]               - Value for TextInput
- * @param {(text: string) => void} [props.onChangeText] - Text change handler
- * @param {string} [props.placeholder]         - Placeholder text
- * @param {ViewStyle} [props.style]            - Container style
- * @param {ViewStyle|TextStyle} [props.inputStyle] - Input/Dropdown style override
- * @param {boolean} [props.secureTextEntry=false]
- * @param {boolean} [props.editable=true]
- * @param {('default'|'number-pad'|'decimal-pad'|'numeric'|'email-address'|'phone-pad')} [props.keyboardType]
- * @param {boolean} [props.multiline=false]
- * @param {React.ReactNode} [props.leftIcon]   - Icon/component on left side
- * @param {React.ReactNode} [props.rightIcon]  - Icon/component on right side (usually eye / clear)
- * @param {() => void} [props.onRightIconPress]
- *
- * === Dropdown specific props ===
- * @param {Array<{label: string, value: any}>} [props.dropdownOptions] - items for dropdown
- * @param {any} [props.selectedValue]          - currently selected value
- * @param {(value: any) => void} [props.onValueChange] - dropdown change handler
+ * Features:
+ * - Unified styling with app theme (borders, colors, typography)
+ * - Optional left & right icons (e.g., eye for password visibility, clear button)
+ * - Responsive padding & sizing based on screen width
+ * - Multiline support with proper text alignment
+ * - Dropdown in modal mode with smooth fade animation
+ * - Consistent look & feel across both input types
  */
+
 import React, { useState } from 'react';
 import {
   TextInput,
@@ -45,13 +40,9 @@ const InputField = ({
   editable = true,
   keyboardType = 'default',
   multiline = false,
-
-  // Icons
   leftIcon,
   rightIcon,
   onRightIconPress,
-
-  // ── Dropdown Props ──
   dropdownOptions,
   selectedValue,
   onValueChange,
@@ -60,7 +51,6 @@ const InputField = ({
 
   const isDropdown = !!dropdownOptions;
 
-  // Common container style
   const containerStyle = [globalStyles.inputContainer, style];
 
   if (isDropdown) {
@@ -76,7 +66,6 @@ const InputField = ({
           listMode="MODAL"
           modalProps={{ animationType: 'fade' }}
           zIndex={1000}
-          // ── Styles ──
           style={[styles.dropdownMain, inputStyle]}
           dropDownContainerStyle={[styles.dropdownList, inputStyle]}
           textStyle={styles.dropdownText}
@@ -88,7 +77,6 @@ const InputField = ({
     );
   }
 
-  // Normal TextInput version
   return (
     <View style={containerStyle}>
       <View
@@ -132,9 +120,6 @@ const InputField = ({
 
 export default InputField;
 
-// ────────────────────────────────────────────────
-// Styles
-// ────────────────────────────────────────────────
 const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
@@ -148,7 +133,7 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     paddingHorizontal: width * 0.04,
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
     fontSize: theme.typography.fontSize.md,
     color: theme.colors.dark,
   },
@@ -179,7 +164,6 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 
-  // ── Dropdown Styles ──
   dropdownMain: {
     borderWidth: 1.5,
     borderColor: theme.colors.primary,
@@ -195,18 +179,18 @@ const styles = StyleSheet.create({
   },
 
   dropdownText: {
-    fontFamily: theme.typography.inter.regular,
+    fontFamily: theme.typography.regular,
     fontSize: theme.typography.fontSize.md,
     color: theme.colors.dark,
   },
 
   dropdownPlaceholder: {
     color: theme.colors.gray,
-    fontFamily: theme.typography.inter.regular,
+    fontFamily: theme.typography.regular,
   },
 
   dropdownItemText: {
-    fontFamily: theme.typography.inter.regular,
+    fontFamily: theme.typography.regular,
     color: theme.colors.dark,
   },
 });

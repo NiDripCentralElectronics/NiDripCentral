@@ -3,15 +3,10 @@
  * @module Utilities/Validation
  * @description
  * Comprehensive validation utilities for form handling and data integrity checks.
- * Provides field-specific validators, password strength rules, product-related validations,
- * bulk field validation, and form validity checking.
+ * Provides field-specific validators (full name, email, password), password strength rules
+ * following modern security best practices, bulk field validation, and form-level validity checking.
  */
 
-/**
- * Validate full name.
- * @param {string} fullName - The user's full name
- * @returns {string} Error message if invalid, empty string if valid
- */
 export const validateFullName = fullName => {
   if (!fullName) return 'Full Name is required';
   if (fullName.trim().length < 3)
@@ -19,11 +14,6 @@ export const validateFullName = fullName => {
   return '';
 };
 
-/**
- * Validate email format using a standard regex pattern.
- * @param {string} email - The email address to validate
- * @returns {string} Error message if invalid, empty string if valid
- */
 export const validateEmail = email => {
   if (!email) return 'Email is required';
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,18 +22,6 @@ export const validateEmail = email => {
   return '';
 };
 
-/**
- * Validate password strength with modern security requirements.
- * Requirements:
- * - Minimum 8 characters
- * - At least 1 uppercase letter
- * - At least 1 lowercase letter
- * - At least 1 number
- * - At least 1 special character
- *
- * @param {string} password - The password to validate
- * @returns {string} Error message if invalid, empty string if valid
- */
 export const validatePassword = password => {
   if (!password) return 'Password is required';
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -53,12 +31,6 @@ export const validatePassword = password => {
   return '';
 };
 
-/**
- * Validate multiple fields at once by mapping field names to their validators.
- *
- * @param {Object<string, any>} fields - Object with field names as keys and values to validate
- * @returns {Object<string, string>} Object containing only fields with errors (fieldName: errorMessage)
- */
 export const validateFields = fields => {
   const validationMap = {
     fullName: validateFullName,
@@ -81,13 +53,6 @@ export const validateFields = fields => {
   return errors;
 };
 
-/**
- * Check if all provided fields pass validation (no errors).
- * Useful for enabling/disabling submit buttons.
- *
- * @param {Object<string, any>} fields - Form field values
- * @returns {boolean} True if no validation errors exist
- */
 export const isValidInput = fields => {
   const errors = validateFields(fields);
   return Object.keys(errors).length === 0;

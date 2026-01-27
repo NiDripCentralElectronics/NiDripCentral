@@ -1,14 +1,21 @@
 /**
- * @typedef {import('react-native').ViewStyle} ViewStyle
- * @typedef {import('react-native').TextStyle} TextStyle
- * @typedef {import('react-native').ImageStyle} ImageStyle
- * @typedef {Object.<string, ViewStyle | TextStyle | ImageStyle>} NamedStyles
- * * @description Responsive scaling helpers and global styles.
- * Baseline Guideline: iPhone 11/13/14/15 (375x812).
- * * @typedef {Object} StyleHelpers
- * @property {(size: number) => number} scale - Horizontal scaling
- * @property {(size: number) => number} verticalScale - Vertical scaling
- * @property {(size: number, factor?: number) => number} moderateScale - Balanced scaling
+ * @file GlobalStyles.js
+ * @module Styles/GlobalStyles
+ * @description
+ * Centralized global style definitions and responsive scaling utilities for consistent UI across the app.
+ *
+ * Provides:
+ * - Responsive scaling functions (scale, verticalScale, moderateScale) based on iPhone 11/13/14/15 guideline size (375×812)
+ * - Reusable base styles for common UI elements:
+ *   - Containers & layout
+ *   - Typography variants (primary, secondary, white, black, error, success)
+ *   - Buttons (primary & secondary)
+ *   - Input fields & labels
+ *   - Cards & card content
+ *   - Dividers
+ *
+ * All styles reference the central `theme` object for colors, typography, spacing, radii, and elevation.
+ * Uses moderate scaling to balance responsiveness while preserving design intent on different screen sizes.
  */
 
 import { theme } from './Themes';
@@ -24,57 +31,52 @@ const verticalScale = size => (height / GUIDELINE_BASE_HEIGHT) * size;
 const moderateScale = (size, factor = 0.5) =>
   size + (scale(size) - size) * factor;
 
-/** @type {NamedStyles} */
 export const globalStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
 
-  // --- Typography ---
-
   textPrimary: {
     color: theme.colors.primary,
-    fontFamily: theme.typography.inter.regular,
+    fontFamily: theme.typography.regular,
     fontSize: moderateScale(theme.typography.fontSize.sm),
   },
 
   textSecondary: {
     color: theme.colors.secondary,
-    fontFamily: theme.typography.inter.regular,
+    fontFamily: theme.typography.regular,
     fontSize: moderateScale(theme.typography.fontSize.sm),
   },
 
   textWhite: {
     color: theme.colors.white,
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
     fontSize: moderateScale(theme.typography.fontSize.sm),
   },
 
   textBlack: {
     color: theme.colors.dark,
-    fontFamily: theme.typography.inter.semiBold,
+    fontFamily: theme.typography.semiBold,
     fontSize: moderateScale(theme.typography.fontSize.sm),
   },
 
   textError: {
     color: theme.colors.error,
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
     fontSize: moderateScale(theme.typography.fontSize.sm),
     paddingLeft: width * 0.014,
   },
 
   textSuccess: {
     color: theme.colors.success,
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
     fontSize: moderateScale(theme.typography.fontSize.sm),
     paddingLeft: width * 0.014,
   },
 
-  // --- Buttons ---
-
   buttonPrimary: {
     backgroundColor: theme.colors.primary,
-    paddingVertical: verticalScale(theme.spacing(2.8)),
+    paddingVertical: verticalScale(theme.spacing(1.8)),
     paddingHorizontal: scale(theme.spacing(4)),
     borderRadius: moderateScale(theme.borderRadius.large),
     alignItems: 'center',
@@ -95,11 +97,9 @@ export const globalStyles = StyleSheet.create({
 
   buttonText: {
     color: theme.colors.white,
-    fontFamily: theme.typography.inter.semiBold,
+    fontFamily: theme.typography.semiBold,
     fontSize: moderateScale(theme.typography.fontSize.md),
   },
-
-  // --- Inputs ---
 
   inputContainer: {
     marginVertical: verticalScale(theme.spacing(1.5)),
@@ -114,20 +114,18 @@ export const globalStyles = StyleSheet.create({
     paddingVertical: verticalScale(theme.spacing(1.6)),
     paddingHorizontal: scale(theme.spacing(2)),
     fontSize: moderateScale(theme.typography.fontSize.md),
-    fontFamily: theme.typography.inter.regular,
+    fontFamily: theme.typography.regular,
     color: theme.colors.dark,
     minHeight: height * 0.06,
   },
 
   inputLabel: {
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
     fontSize: moderateScale(theme.typography.fontSize.sm),
     marginBottom: verticalScale(theme.spacing(0.5)),
     paddingLeft: width * 0.01,
     color: theme.colors.dark,
   },
-
-  // --- Cards & Layout ---
 
   card: {
     backgroundColor: theme.colors.white,
@@ -139,14 +137,14 @@ export const globalStyles = StyleSheet.create({
   },
 
   cardTitle: {
-    fontFamily: theme.typography.inter.bold,
+    fontFamily: theme.typography.bold,
     fontSize: moderateScale(theme.typography.fontSize.lg),
     color: theme.colors.dark,
     marginBottom: verticalScale(theme.spacing(1)),
   },
 
   cardContent: {
-    fontFamily: theme.typography.inter.regular,
+    fontFamily: theme.typography.regular,
     fontSize: moderateScale(theme.typography.fontSize.md),
     color: theme.colors.dark,
     lineHeight: moderateScale(theme.typography.lineHeight.md),

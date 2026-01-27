@@ -1,40 +1,20 @@
 /**
- * @typedef {Object} ColorPalette
- * @property {string} primary - Main brand color (Pink)
- * @property {string} secondary - Secondary brand color (Green)
- * @property {string} success - Success state color
- * @property {string} error - Error state color
- * @property {string} white - Absolute white
- * @property {string} dark - Absolute black
- * @property {string} gray - Neutral gray
- * * @typedef {Object} Typography
- * @property {Object} inter - Font family weights
- * @property {string} inter.black
- * @property {string} inter.bold
- * @property {string} inter.light
- * @property {string} inter.medium
- * @property {string} inter.regular
- * @property {string} inter.semiBold
- * @property {Record<string, number>} fontSize - Font sizes in pixels
- * @property {Record<string, number>} lineHeight - Line heights in pixels
- * * @typedef {Object} ShadowStyle
- * @property {string} shadowColor
- * @property {Object} shadowOffset
- * @property {number} shadowOffset.width
- * @property {number} shadowOffset.height
- * @property {number} shadowOpacity
- * @property {number} shadowRadius
- * @property {number} elevation
- * * @typedef {Object} Theme
- * @property {ColorPalette} colors
- * @property {Typography} typography
- * @property {(factor: number) => number} spacing
- * @property {(factor: number) => number} gap
- * @property {Record<string, number>} borderRadius
- * @property {Record<string, ShadowStyle>} elevation
+ * @file Themes.js
+ * @module Styles/Themes
+ * @description
+ * Centralized design system theme configuration for the entire React Native application.
+ *
+ * Exports a single `theme` object containing:
+ * - Color palette (brand colors, semantic states, neutrals)
+ * - Typography configuration (Inter font family weights + responsive font sizes/line heights)
+ * - Spacing & gap utilities (8px-based scale)
+ * - Border radius presets
+ * - Elevation/shadow styles (iOS shadow + Android elevation levels)
+ *
+ * All components should reference values from this theme for consistent look & feel.
+ * Uses functional spacing/gap helpers for maintainable, scalable layout values.
  */
 
-/** @type {Theme} */
 export const theme = {
   colors: {
     primary: '#ff3aa6',
@@ -43,18 +23,16 @@ export const theme = {
     error: '#f00221',
     white: '#ffffff',
     dark: '#000000',
-    gray: '#dde0e5',
+    gray: '#ced4df',
   },
 
   typography: {
-    inter: {
-      black: 'Inter_18pt-Black',
-      bold: 'Inter_18pt-Bold',
-      light: 'Inter_18pt-Light',
-      medium: 'Inter_18pt-Medium',
-      regular: 'Inter_18pt-Regular',
-      semiBold: 'Inter_18pt-SemiBold',
-    },
+    black: 'Inter_18pt-Black',
+    bold: 'Inter_18pt-Bold',
+    light: 'Inter_18pt-Light',
+    medium: 'Inter_18pt-Medium',
+    regular: 'Inter_18pt-Regular',
+    semiBold: 'Inter_18pt-SemiBold',
 
     fontSize: {
       xs: 16,

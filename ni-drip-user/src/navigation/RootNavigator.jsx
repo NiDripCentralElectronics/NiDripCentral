@@ -1,14 +1,22 @@
 /**
  * @file RootNavigator.jsx
+ * @module Navigation/RootNavigator
  * @description
- * Top-level app wrapper that composes:
- *  - Redux store + persistence (redux-persist)
- *  - React Navigation root container
- *  - Main app navigator (AppNavigator)
+ * Top-level application wrapper that composes the core infrastructure:
  *
- * This is typically the root component rendered in index.js / App.js
+ * - Redux Provider (makes store available to all components)
+ * - Redux Persist Gate (handles state rehydration from AsyncStorage)
+ * - NavigationContainer (required root for React Navigation)
+ * - Main app navigation structure (AppNavigator)
  *
- * @component
+ * This component serves as the single entry point for the entire app UI.
+ * It is typically rendered directly in index.js or App.js.
+ *
+ * Features:
+ * - Seamless persistence of authentication state across app restarts
+ * - Proper loading state handling during persist rehydration
+ * - Centralized navigation context for deep linking, screen transitions, etc.
+ *
  * @example
  * // index.js or App.js
  * import RootNavigator from './navigation/RootNavigator';
@@ -17,6 +25,7 @@
  *   return <RootNavigator />;
  * }
  */
+
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
@@ -24,13 +33,6 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from '../redux/store/store';
 import AppNavigator from './AppNavigator';
 
-/**
- * Root-level component that sets up:
- * - Redux Provider
- * - Redux Persist Gate (handles rehydration)
- * - NavigationContainer (required for react-navigation)
- * - Main application navigator
- */
 const RootNavigator = () => {
   return (
     <Provider store={store}>

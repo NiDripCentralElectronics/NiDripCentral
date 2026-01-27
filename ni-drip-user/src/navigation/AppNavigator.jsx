@@ -1,30 +1,37 @@
 /**
  * @file AppNavigator.jsx
+ * @module Navigation/AppNavigator
  * @description
- * Main navigation structure using React Navigation's native stack navigator.
+ * Root navigation setup using React Navigation's Native Stack Navigator.
+ *
+ * Responsibilities:
+ * - Defines the main app navigation structure
+ * - Manages global StatusBar appearance (color + light-content style)
+ * - Starts with cinematic Splash screen as entry point
+ * - Provides dynamic status bar color control to child screens
+ * - Applies consistent screen options: no headers, fade-from-bottom transitions
+ *
+ * Current structure:
+ * - Splash screen (initial route)
+ * - Designed to expand with authentication flow, main app screens, modals, etc.
+ *
  * Features:
- * - Hidden headers by default
- * - Dynamic StatusBar color control (passed down via prop)
- * - Splash screen as initial route
- *
- * This file will typically grow to include all main app screens and auth flows.
- *
- * @component
+ * - Global StatusBar management with runtime color updates
+ * - Smooth modern screen transitions
+ * - Gesture navigation enabled
+ * - Theme-integrated default status bar color
  */
+
 import React, { useState } from 'react';
 import { StatusBar } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { theme } from '../styles/Themes';
 
 import Splash from '../screens/splash-screen/Splash';
+import OnBoarding from '../screens/onboarding-screen/OnBoarding'
 
 const Stack = createNativeStackNavigator();
 
-/**
- * Root application navigator with dynamic status bar color support.
- * The status bar color can be changed from any screen by calling the
- * setStatusBarColor function passed via props.
- */
 const AppNavigator = () => {
   const [statusBarColor, setStatusBarColor] = useState(theme.colors.primary);
 
@@ -40,14 +47,18 @@ const AppNavigator = () => {
         initialRouteName="Splash"
         screenOptions={{
           headerShown: false,
-          animation: 'fade_from_bottom', // smooth modern feel
+          animation: 'fade_from_bottom',
           gestureEnabled: true,
         }}
       >
-        {/* ── Entry / Auth Flow ── */}
         <Stack.Screen name="Splash">
           {props => <Splash {...props} setStatusBarColor={setStatusBarColor} />}
         </Stack.Screen>
+
+         <Stack.Screen name="OnBoarding">
+          {props => <OnBoarding {...props} setStatusBarColor={setStatusBarColor} />}
+        </Stack.Screen>
+
       </Stack.Navigator>
     </>
   );

@@ -1,37 +1,29 @@
 /**
- * Full-screen centered loading indicator using the app's primary color.
- * Designed as a full-page loader, overlay, or Suspense fallback.
+ * @file Loader.jsx
+ * @module Components/Loader
+ * @description
+ * Simple, full-screen centered loading indicator component.
+ * Uses React Native's ActivityIndicator with app theme primary color by default.
  *
- * @component
- * @example
- * ```jsx
- * // As full-screen loader
- * {isLoading && <Loader />}
+ * Designed for:
+ * - Full-page loading states / overlays
+ * - Suspense fallback during component lazy-loading
+ * - Inline or section-level loading indicators
  *
- * // As Suspense fallback
- * <Suspense fallback={<Loader />}>
- *   <HeavyComponent />
- * </Suspense>
- *
- * // With custom size
- * <Loader size="small" color={theme.colors.secondary} />
- * ```
- *
- * @param {('small'|'large')} [size='large'] - Size of the spinner
- * @param {string} [color] - Override default primary color
- * @param {StyleProp<ViewStyle>} [style] - Additional styles for the container
+ * Features:
+ * - Responsive size options (small/large)
+ * - Custom color override
+ * - Accessibility support (label & hint)
+ * - Centered positioning with optional subtle backdrop overlay
+ * - Compatible with global container styles
  */
+
 import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-
 import { theme } from '../../../styles/Themes';
 import { globalStyles } from '../../../styles/GlobalStyles';
 
-export default function Loader({
-  size = 'large',
-  color,
-  style,
-}) {
+export default function Loader({ size = 'large', color, style }) {
   return (
     <View style={[globalStyles.container, styles.container, style]}>
       <ActivityIndicator
@@ -49,6 +41,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)', // optional subtle overlay
+    backgroundColor: 'rgba(0, 0, 0, 0.4)', 
   },
 });

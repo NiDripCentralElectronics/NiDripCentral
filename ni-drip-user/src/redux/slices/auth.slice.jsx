@@ -1,13 +1,26 @@
 /**
  * @file authSlice.js
+ * @module Redux/Slices/Auth
  * @description
- * Redux Toolkit slice + thunks for authentication flow:
- * - User registration (with multipart/form-data support)
- * - User login + token storage
- * - Logout with server invalidation
+ * Redux Toolkit slice managing the complete authentication flow.
  *
- * Uses AsyncStorage for token persistence.
- * Follows RTK best practices with proper loading/error states.
+ * Handles:
+ * - User registration (multipart/form-data support for profile pictures etc.)
+ * - User login with JWT token storage in AsyncStorage
+ * - Secure logout (server-side invalidation + local token clearance)
+ * - Initial auth state check on app start (token validation + user fetch)
+ *
+ * Features:
+ * - Proper loading, success, error, and message states
+ * - Async thunks with rejectWithValue for clean error handling
+ * - Automatic token persistence & removal
+ * - Fail-safe local logout even if server request fails
+ * - Optional server-side token verification on checkAuth
+ *
+ * Exports:
+ * - Thunks: registerUser, loginUser, logoutUser, checkAuth
+ * - Action: clearAuthState (manual reset)
+ * - Reducer: default export for store configuration
  */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
@@ -16,8 +29,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CONFIG from '../config/Config';
 
 const { BASE_URL } = CONFIG;
-
-// ── Async Thunks ────────────────────────────────────────────────
 
 /**
  * Register a new user (supports file upload e.g. profile picture)
@@ -89,7 +100,6 @@ export const logoutUser = createAsyncThunk(
       const token = await AsyncStorage.getItem('authToken');
 
       if (!token) {
-        // Already logged out locally
         return { success: true, message: 'Already logged out' };
       }
 
@@ -101,12 +111,10 @@ export const logoutUser = createAsyncThunk(
         },
       );
 
-      // Clear storage regardless of server response (fail-safe)
       await AsyncStorage.removeItem('authToken');
 
       return response.data;
     } catch (error) {
-      // Still clear local token even if server fails
       await AsyncStorage.removeItem('authToken');
       return rejectWithValue(
         error.response?.data || {
@@ -117,7 +125,10 @@ export const logoutUser = createAsyncThunk(
   },
 );
 
-// ── Optional: Check current auth status on app start ──
+
+/**
+ * Check Auth
+ */
 export const checkAuth = createAsyncThunk(
   'auth/checkAuth',
   async (_, { rejectWithValue }) => {
@@ -127,7 +138,6 @@ export const checkAuth = createAsyncThunk(
         return { isAuthenticated: false };
       }
 
-      // Optional: verify token with server (recommended)
       const response = await axios.get(`${BASE_URL}/user/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -144,22 +154,19 @@ export const checkAuth = createAsyncThunk(
   },
 );
 
-// ── Slice ───────────────────────────────────────────────────────
-
 const initialState = {
   user: null,
   token: null,
   isAuthenticated: false,
   loading: false,
   error: null,
-  message: null, // for success/info messages
+  message: null,
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Optional: manual logout / reset (for UI-only actions)
     clearAuthState: state => {
       state.user = null;
       state.token = null;
@@ -169,7 +176,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // ── Register ──
     builder
       .addCase(registerUser.pending, state => {
         state.loading = true;
@@ -186,7 +192,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Login ──
       .addCase(loginUser.pending, state => {
         state.loading = true;
         state.error = null;
@@ -204,7 +209,6 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Logout ──
       .addCase(logoutUser.pending, state => {
         state.loading = true;
       })
@@ -223,7 +227,6 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       })
 
-      // ── Check Auth ──
       .addCase(checkAuth.pending, state => {
         state.loading = true;
       })

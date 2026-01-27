@@ -1,52 +1,18 @@
 /**
- * Reusable animated modal component with "Delete Product" style aesthetics
- * Features fade + scale + slight bounce entrance animation,
- * dark theme styling, backdrop dismissal, custom buttons, loading states, and icon support.
- *
- * @component
- * @example
- * ```jsx
- * <Modal
- *   isOpen={showDeleteModal}
- *   onClose={() => setShowDeleteModal(false)}
- *   title="Delete Product"
- *   icon={<TrashIcon width={48} height={48} color={theme.colors.error} />}
- *   buttons={[
- *     {
- *       label: "Cancel",
- *       variant: "secondary",
- *       onClick: () => setShowDeleteModal(false),
- *     },
- *     {
- *       label: "Delete",
- *       variant: "danger",
- *       loading: isDeleting,
- *       disabled: isDeleting,
- *       onClick: handleDelete,
- *     },
- *   ]}
- * >
- *   Are you sure you want to delete <Text style={{color: theme.colors.white}}>{product.name}</Text>?
- *   This action cannot be undone.
- * </Modal>
- * ```
- *
- * @param {boolean} isOpen - Controls whether the modal is visible
- * @param {() => void} onClose - Callback fired when user wants to close the modal
- * @param {string} [title=''] - Optional title displayed at the top
- * @param {React.ReactNode} children - Main content of the modal (string or JSX)
- * @param {Array<{
- *   label: string,
- *   onClick: () => void,
- *   variant?: 'primary' | 'secondary' | 'cancel' | 'danger',
- *   loading?: boolean,
- *   disabled?: boolean
- * }>} [buttons=[]] - Array of button configurations
- * @param {React.ReactNode} [icon] - Optional icon displayed above content
- * @param {StyleProp<ViewStyle>} [contentStyle] - Custom styles for the modal content container
- * @param {boolean} [closeOnBackdrop=true] - Whether tapping outside the modal closes it
- * @param {boolean} [showCloseButton=true] - Whether to show the × close button in header
+ * @file Modal.jsx
+ * @module Components/Modal
+ * @description
+ * Reusable animated modal dialog component with dark theme aesthetics.
+ * Features:
+ * - Smooth fade + scale + slight bounce entrance/exit animation
+ * - Centered modal with semi-transparent backdrop
+ * - Optional title, icon, custom content, and configurable buttons
+ * - Support for loading states, disabled buttons, and danger/secondary variants
+ * - Backdrop dismissal and optional close (×) button
+ * - Responsive sizing based on screen width
+ * - Designed especially for confirmation dialogs (e.g. delete product/confirmation flows)
  */
+
 import React, { useEffect, useRef } from 'react';
 import {
   Modal as RNModal,
@@ -61,7 +27,7 @@ import {
 import { theme } from '../../../styles/Themes';
 import Loader from '../loader/Loader.utility';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 const Modal = ({
   isOpen,
@@ -236,17 +202,17 @@ const styles = StyleSheet.create({
   },
 
   modalContent: {
-    width: SCREEN_WIDTH * 0.9,
-    maxWidth: SCREEN_WIDTH * 0.9,
+    width: width * 0.9,
+    maxWidth: width * 0.9,
     borderRadius: theme.borderRadius.large,
-    padding: SCREEN_WIDTH * 0.05,
+    padding: width * 0.05,
     backgroundColor: '#000000',
     borderWidth: 2,
     borderColor: '#1E1E1E',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: SCREEN_WIDTH * 0.04,
+      height: height * 0.04,
     },
     shadowOpacity: 0.51,
     shadowRadius: 13.16,
@@ -257,18 +223,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: SCREEN_WIDTH * 0.04,
+    marginBottom: width * 0.04,
   },
 
   title: {
-    fontFamily: theme.typography.inter.bold,
+    fontFamily: theme.typography.bold,
     fontSize: theme.typography.fontSize.xl,
     color: theme.colors.white,
     flex: 1,
   },
 
   closeButton: {
-    padding: SCREEN_WIDTH * 0.03,
+    padding: width * 0.03,
   },
 
   closeIcon: {
@@ -279,20 +245,20 @@ const styles = StyleSheet.create({
   },
 
   body: {
-    marginTop: SCREEN_WIDTH * 0.014,
-    marginBottom: SCREEN_WIDTH * 0.09,
+    marginTop: width * 0.014,
+    marginBottom: width * 0.09,
   },
 
   bodyText: {
-    fontFamily: theme.typography.inter.medium,
+    fontFamily: theme.typography.medium,
     fontSize: theme.typography.fontSize.md,
     color: theme.colors.gray,
-    lineHeight: SCREEN_WIDTH * 0.08,
+    lineHeight: width * 0.08,
   },
 
   iconContainer: {
     alignItems: 'center',
-    marginBottom: SCREEN_WIDTH * 0.02,
+    marginBottom: width * 0.02,
   },
 
   footer: {
@@ -302,10 +268,10 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    paddingVertical: SCREEN_WIDTH * 0.026,
-    paddingHorizontal: SCREEN_WIDTH * 0.056,
+    paddingVertical: width * 0.026,
+    paddingHorizontal: width * 0.056,
     borderRadius: theme.borderRadius.medium,
-    minWidth: SCREEN_WIDTH * 0.09,
+    minWidth: width * 0.09,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -329,7 +295,7 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    fontFamily: theme.typography.inter.semiBold,
+    fontFamily: theme.typography.semiBold,
     fontSize: theme.typography.fontSize.xs,
     color: theme.colors.white,
   },

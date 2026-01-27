@@ -1,13 +1,25 @@
 /**
  * @file userSlice.js
+ * @module Redux/Slices/User
  * @description
- * Redux Toolkit slice + thunks for user profile management:
- * - Fetch current user by ID
- * - Update user profile (supports multipart/form-data for image upload etc.)
- * - Delete user account (with local cleanup)
+ * Redux Toolkit slice for managing user profile operations.
  *
- * Handles authentication via stored JWT token in AsyncStorage.
- * Integrates with auth slice via dispatched actions (clearUser).
+ * Handles:
+ * - Fetching current user profile by ID (authenticated)
+ * - Updating user profile (multipart/form-data support for avatar, etc.)
+ * - Deleting user account with server-side removal + local cleanup
+ *
+ * Features:
+ * - Token-based authentication via AsyncStorage
+ * - Proper loading/error state management
+ * - Multipart/form-data support for profile picture uploads
+ * - Safe local cleanup on delete (removes token & user data)
+ * - Integration point with auth slice via clearUser action
+ *
+ * Exports:
+ * - Thunks: getUser, updateUser, deleteAccount
+ * - Action: clearUser (manual user state reset)
+ * - Reducer: default export for store configuration
  */
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
@@ -17,7 +29,6 @@ import CONFIG from '../config/Config';
 
 const { BASE_URL } = CONFIG;
 
-// ── Helper: Get auth token with rejection ───────────────────────
 const getToken = async rejectWithValue => {
   try {
     const token = await AsyncStorage.getItem('authToken');
@@ -32,12 +43,6 @@ const getToken = async rejectWithValue => {
   }
 };
 
-// ── Async Thunks ────────────────────────────────────────────────
-
-/**
- * Fetch user profile by ID
- * @param {string} userId - The ID of the user to fetch
- */
 export const getUser = createAsyncThunk(
   'user/getUser',
   async (userId, { rejectWithValue }) => {
@@ -60,10 +65,6 @@ export const getUser = createAsyncThunk(
   },
 );
 
-/**
- * Update user profile (supports file uploads like profile picture)
- * @param {{ userId: string, formData: FormData }} payload
- */
 export const updateUser = createAsyncThunk(
   'user/updateUser',
   async ({ userId, formData }, { rejectWithValue }) => {
@@ -92,10 +93,6 @@ export const updateUser = createAsyncThunk(
   },
 );
 
-/**
- * Delete user account and clean up local storage
- * @param {string} userId - ID of the user to delete
- */
 export const deleteAccount = createAsyncThunk(
   'user/deleteAccount',
   async (userId, { rejectWithValue, dispatch }) => {
@@ -117,10 +114,8 @@ export const deleteAccount = createAsyncThunk(
         throw new Error(response.data.message || 'Account deletion failed');
       }
 
-      // Clean up local storage
       await AsyncStorage.multiRemove(['authToken', 'userData']);
 
-      // Clear user state (assuming this is dispatched from auth or user slice)
       dispatch(clearUser());
 
       return response.data;
@@ -133,8 +128,6 @@ export const deleteAccount = createAsyncThunk(
     }
   },
 );
-
-// ── Slice ───────────────────────────────────────────────────────
 
 const initialState = {
   user: null,
@@ -153,7 +146,6 @@ const userSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      // ── Get User ──
       .addCase(getUser.pending, state => {
         state.loading = true;
         state.error = null;
@@ -167,7 +159,6 @@ const userSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Update User ──
       .addCase(updateUser.pending, state => {
         state.loading = true;
         state.error = null;
@@ -181,7 +172,6 @@ const userSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ── Delete Account ──
       .addCase(deleteAccount.pending, state => {
         state.loading = true;
         state.error = null;
