@@ -33,37 +33,47 @@ exports.addRating = async (req, res) => {
       });
     }
 
-    // Upsert rating (prevents duplicates)
-    await Rating.findOneAndUpdate(
-      { user: userId, product: productId },
-      { stars: Number(stars) },
-      { upsert: true, new: true, runValidators: true },
+    // Check if user already rated
+    const existingRating = product.ratings.find(
+      (r) => r.user.toString() === userId,
     );
 
-    // Recalculate average
-    const ratings = await Rating.find({ product: productId });
-    const total = ratings.length;
+    if (existingRating) {
+      // Update stars
+      existingRating.stars = Number(stars);
+    } else {
+      // Push new rating
+      product.ratings.push({
+        user: userId,
+        stars: Number(stars),
+      });
+    }
+
+    // Recalculate stats
+    const total = product.ratings.length;
     const avg =
       total > 0
-        ? (ratings.reduce((sum, r) => sum + r.stars, 0) / total).toFixed(1)
+        ? product.ratings.reduce((sum, r) => sum + r.stars, 0) / total
         : 0;
 
-    await Product.findByIdAndUpdate(productId, {
-      averageRating: Number(avg),
-      totalRatings: total,
-    });
+    product.averageRating = Number(avg.toFixed(1));
+    product.totalRatings = total;
+
+    await product.save();
 
     res.status(200).json({
       success: true,
       message: "Rating submitted",
-      stats: { averageRating: avg, totalRatings: total },
+      stats: {
+        averageRating: product.averageRating,
+        totalRatings: total,
+      },
     });
   } catch (error) {
     console.error("Add rating error:", error);
     res.status(500).json({
       success: false,
       message: "Server Error",
-      error: error.message,
     });
   }
 };

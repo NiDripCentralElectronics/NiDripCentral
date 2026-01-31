@@ -215,7 +215,18 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
-      <Header logo={require('../../assets/logo/logo.png')} title="Home" />
+      <Header
+        logo={require('../../assets/logo/logo.png')}
+        title="Home"
+        rightIcon={
+          <MaterialCommunityIcons
+            name="cart-outline"
+            size={width * 0.06}
+            color={theme.colors.white}
+          />
+        }
+        onPressRight={() => navigation.navigate('Cart')}
+      />
 
       <View style={styles.locationSection}>
         <Animatable.View

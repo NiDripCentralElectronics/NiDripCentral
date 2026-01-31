@@ -15,25 +15,38 @@ const Product = require("../../models/product-model/product.model");
  */
 exports.addReview = async (req, res) => {
   try {
-    const { productId, reviewText } = req.body;
+    const { productId, reviewText, stars } = req.body;
     const userId = req.user.id;
 
     if (!productId || !reviewText?.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "Product ID and review text required",
-      });
+      return res
+        .status(400)
+        .json({ success: false, message: "Required fields missing" });
     }
 
-    const review = await Review.create({
+    let review = await Review.create({
       user: userId,
       product: productId,
       reviewText: reviewText.trim(),
     });
 
+    review = await review.populate([
+      { path: "user", select: "userName email profilePicture" },
+      {
+        path: "product",
+        select: "title productImages averageRating totalRatings",
+      },
+    ]);
+
     await Product.findByIdAndUpdate(productId, {
       $inc: { totalReviews: 1 },
-      $push: { reviews: { user: userId, reviewText: reviewText.trim() } },
+      $push: {
+        reviews: {
+          _id: review._id,
+          user: userId,
+          reviewText: reviewText.trim(),
+        },
+      },
     });
 
     res.status(201).json({
@@ -42,12 +55,9 @@ exports.addReview = async (req, res) => {
       newReview: review,
     });
   } catch (error) {
-    console.error("Add review error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({ success: false, message: "Server Error", error: error.message });
   }
 };
 
@@ -111,20 +121,12 @@ exports.deleteReview = async (req, res) => {
   try {
     const { reviewId } = req.params;
     const userId = req.user.id;
-    const isAdmin = req.user.role === "SUPERADMIN";
 
     const review = await Review.findById(reviewId);
     if (!review) {
       return res.status(404).json({
         success: false,
         message: "Review not found",
-      });
-    }
-
-    if (review.user.toString() !== userId && !isAdmin) {
-      return res.status(403).json({
-        success: false,
-        message: "Not authorized to delete this review",
       });
     }
 
@@ -157,8 +159,8 @@ exports.deleteReview = async (req, res) => {
 exports.getAllReviews = async (req, res) => {
   try {
     const reviews = await Review.find()
-      .populate("user", "profilePicture userName email") 
-      .populate("product", "productImage title description") 
+      .populate("user", "profilePicture userName email")
+      .populate("product", "productImage title description")
       .sort({ createdAt: -1 });
 
     if (!reviews.length) {

@@ -26,7 +26,6 @@ export const createTicket = createAsyncThunk(
         ticketData,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
       return response.data;
     } catch (error) {
       const backend = error.response?.data;
@@ -47,12 +46,10 @@ export const getUserTickets = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const token = await AsyncStorage.getItem('authToken');
-
       const response = await axios.get(
         `${BACKEND_API_URL}/support/get-my-tickets/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
       return response.data;
     } catch (error) {
       const backend = error.response?.data;
@@ -77,7 +74,6 @@ export const getTicketById = createAsyncThunk(
         `${BACKEND_API_URL}/support/get-ticket-by-id/${ticketId}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
       return response.data;
     } catch (error) {
       const backend = error.response?.data;
@@ -102,8 +98,7 @@ export const deleteTicket = createAsyncThunk(
         `${BACKEND_API_URL}/support/delete-ticket/${ticketId}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
-      return { ticketId, message: response.data.message };
+      return { ticketId, message: response.data.message, success: true };
     } catch (error) {
       const backend = error.response?.data;
       return rejectWithValue({
@@ -154,36 +149,67 @@ const supportSlice = createSlice({
       .addCase(createTicket.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.message = action.payload?.message;
+        state.success = false;
       })
+
       .addCase(getUserTickets.pending, state => {
         state.loading = true;
         state.error = null;
+        state.message = null;
+        state.success = false;
       })
       .addCase(getUserTickets.fulfilled, (state, action) => {
         state.loading = false;
         state.tickets = action.payload.allTickets;
         state.message = action.payload.message;
+        state.success = true;
       })
       .addCase(getUserTickets.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.message = action.payload?.message;
+        state.success = false;
+      })
+
+      .addCase(getTicketById.pending, state => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+        state.success = false;
       })
       .addCase(getTicketById.fulfilled, (state, action) => {
+        state.loading = false;
         state.currentTicket = action.payload.ticket;
+        state.message = action.payload.message;
+        state.success = true;
       })
+      .addCase(getTicketById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.message = action.payload?.message;
+        state.success = false;
+      })
+
       .addCase(deleteTicket.pending, state => {
         state.loading = true;
+        state.error = null;
+        state.message = null;
+        state.success = false;
       })
       .addCase(deleteTicket.fulfilled, (state, action) => {
         state.loading = false;
-        state.message = action.payload.message;
         state.tickets = state.tickets.filter(
-          ticket => ticket._id !== action.payload.ticketId,
+          t => t._id !== action.payload.ticketId,
         );
+        state.message = action.payload.message;
+        state.success = true;
       })
       .addCase(deleteTicket.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.message = action.payload?.message;
+        state.success = false;
       });
   },
 });

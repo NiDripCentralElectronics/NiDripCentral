@@ -46,6 +46,8 @@ const ProductCard = ({ product, onPress }) => {
   const { favorites = [], loading } = useSelector(state => state.favorites);
   const isFavorite = favorites.some(fav => fav.productId?._id === product._id);
 
+  console.log('Favorite', favorites);
+
   const heartRef = useRef(null);
   const scaleValue = useRef(new Animated.Value(1)).current;
   const prevFavoriteRef = useRef(false);
@@ -132,15 +134,6 @@ const ProductCard = ({ product, onPress }) => {
             {product.title}
           </Text>
 
-          <View style={styles.metaRow}>
-            <View style={styles.ratingBadge}>
-              <MaterialCommunityIcons name="star" size={12} color="#F59E0B" />
-              <Text style={styles.ratingText}>
-                {product.rating ? Number(product.rating).toFixed(1) : '0'}
-              </Text>
-            </View>
-          </View>
-
           <View style={styles.bottomRow}>
             <View>
               <Text style={styles.price}>
@@ -226,29 +219,6 @@ const styles = StyleSheet.create({
     fontFamily: theme.typography.bold,
     color: '#1E293B',
     marginBottom: height * 0.01,
-  },
-
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: height * 0.01,
-  },
-
-  ratingBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FEF3C7',
-    paddingHorizontal: width * 0.02,
-    paddingVertical: height * 0.004,
-    borderRadius: theme.borderRadius.small,
-    marginRight: width * 0.02,
-  },
-
-  ratingText: {
-    fontSize: theme.typography.fontSize.xs,
-    fontFamily: theme.typography.bold,
-    color: '#D97706',
-    marginLeft: width * 0.01,
   },
 
   bottomRow: {

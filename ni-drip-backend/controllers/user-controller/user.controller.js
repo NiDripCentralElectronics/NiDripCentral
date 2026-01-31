@@ -9,7 +9,11 @@ const axios = require("axios");
 const crypto = require("crypto");
 const User = require("../../models/user-model/user.model");
 const Cart = require("../../models/cart-model/cart.model");
+const Favorite = require("../../models/favorite-model/favorite.model");
+const Review = require("../../models/review-model/review.model");
+const Rating = require("../../models/rating-model/rating.model");
 const Order = require("../../models/order-model/order.model");
+const Support = require("../../models/support-model/support.model");
 const {
   uploadToCloudinary,
   deleteFromCloudinary,
@@ -398,6 +402,10 @@ exports.deleteAccount = async (req, res) => {
     await User.findByIdAndDelete(userId);
     await Cart.deleteMany({ userId });
     await Order.deleteMany({ userId });
+    await Favorite.deleteMany({ userId });
+    await Review.deleteMany({ user });
+    await Rating.deleteMany({ user });
+    await Support.deleteMany({ user });
 
     res.clearCookie("accessToken", { httpOnly: true, sameSite: "strict" });
 

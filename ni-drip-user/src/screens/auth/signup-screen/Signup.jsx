@@ -54,7 +54,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    StatusBar.setBarStyle('light-content');    
+    StatusBar.setBarStyle('light-content');
     StatusBar.setBackgroundColor('transparent');
   }, []);
 
@@ -151,10 +151,12 @@ const Signup = () => {
       formData.append('userName', name);
       formData.append('email', email);
       formData.append('password', password);
+
       if (newImageURL) {
         const uriParts = newImageURL.split('/');
         const fileName = uriParts[uriParts.length - 1];
         const fileType = fileName.split('.').pop();
+
         formData.append('profilePicture', {
           uri: newImageURL,
           name: fileName,
@@ -165,12 +167,12 @@ const Signup = () => {
       const resultAction = await dispatch(registerUser(formData));
 
       if (registerUser.fulfilled.match(resultAction)) {
+        const message = resultAction.payload?.message;
+
         Toast.show({
           type: 'success',
-          text1: 'Account Created!',
-          text2: 'Welcome to BookHeaven! Redirecting...',
-          position: 'top',
-          visibilityTime: 2500,
+          text1: 'Success',
+          text2: message,
         });
 
         setName('');
@@ -180,25 +182,30 @@ const Signup = () => {
 
         setTimeout(() => {
           navigation.replace('Signin');
-        }, 1800);
-      } else {
+        }, 1500);
+
+        return;
+      }
+
+      if (registerUser.rejected.match(resultAction)) {
         formRef.current?.shake();
+
+        const payload = resultAction.payload || {};
+        const message = payload.message || 'Registration failed';
+
         Toast.show({
           type: 'error',
           text1: 'Registration Failed',
-          text2: 'Please check your details and try again',
-          position: 'top',
-          visibilityTime: 4000,
+          text2: message,
         });
       }
     } catch (err) {
       formRef.current?.shake();
+
       Toast.show({
         type: 'error',
-        text1: 'Connection Error',
-        text2: err?.message || 'Something went wrong. Please try again.',
-        position: 'top',
-        visibilityTime: 5000,
+        text1: 'Unexpected Error',
+        text2: err?.message || 'Unexpected error',
       });
     } finally {
       setLoading(false);
@@ -235,9 +242,7 @@ const Signup = () => {
           >
             <View style={styles.headerTextContainer}>
               <Text style={styles.title}>Create Account</Text>
-              <Text style={styles.description}>
-                Join BookHeaven and unlock a world of stories!
-              </Text>
+              <Text style={styles.description}>Join Us!</Text>
             </View>
 
             <Animatable.View

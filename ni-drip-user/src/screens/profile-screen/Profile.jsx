@@ -57,7 +57,7 @@ const Profile = () => {
   }, [dispatch, user]);
 
   useEffect(() => {
-    StatusBar.setBarStyle('light-content');    
+    StatusBar.setBarStyle('light-content');
     StatusBar.setBackgroundColor('transparent');
   }, []);
 
@@ -71,28 +71,35 @@ const Profile = () => {
 
   const handleLogout = async () => {
     try {
-      const result = await dispatch(logoutUser()).unwrap();
+      const resultAction = await dispatch(logoutUser());
 
-      Toast.show({
-        type: 'success',
-        text1: 'Logout Successful',
-        text2: result?.message || 'You have been logged out.',
-      });
-
-      setTimeout(() => {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Signin' }],
+      if (logoutUser.fulfilled.match(resultAction)) {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: resultAction.payload?.message,
         });
-      }, 2000);
-    } catch (error) {
+
+        setTimeout(() => {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Signin' }],
+          });
+        }, 2000);
+      } else if (logoutUser.rejected.match(resultAction)) {
+        Toast.show({
+          type: 'error',
+          text1: 'Failure',
+          text2:
+            resultAction.payload?.message ||
+            'Something went wrong during logout.',
+        });
+      }
+    } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Logout Error',
-        text2:
-          typeof error === 'string'
-            ? error
-            : error?.message || 'Something went wrong.',
+        text1: 'Unexpected Error',
+        text2: err?.message || 'Something went wrong.',
       });
     }
   };
@@ -109,29 +116,37 @@ const Profile = () => {
 
     setLoading(true);
     try {
-      const result = await dispatch(
+      const resultAction = await dispatch(
         deleteAccount({
           userId: profile?.id || profile?._id,
           reason: deleteReason,
         }),
-      ).unwrap();
+      );
 
-      setShowDeleteModal(false);
-      Toast.show({
-        type: 'success',
-        text1: 'Account Deleted',
-        text2: result?.message || 'Your account has been removed.',
-      });
+      if (deleteAccount.fulfilled.match(resultAction)) {
+        setShowDeleteModal(false);
 
-      setTimeout(() => {
-        navigation.reset({ index: 0, routes: [{ name: 'Signin' }] });
-      }, 2000);
-    } catch (error) {
+        Toast.show({
+          type: 'success',
+          text1: 'Account Deleted',
+          text2: resultAction.payload?.message,
+        });
+
+        setTimeout(() => {
+          navigation.reset({ index: 0, routes: [{ name: 'Signin' }] });
+        }, 2000);
+      } else if (deleteAccount.rejected.match(resultAction)) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: resultAction.payload?.message || 'Failed to delete account.',
+        });
+      }
+    } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2:
-          typeof error === 'string' ? error : error?.message || 'Delete failed',
+        text1: 'Unexpected Error',
+        text2: err?.message || 'Something went wrong.',
       });
     } finally {
       setLoading(false);
@@ -179,11 +194,19 @@ const Profile = () => {
 
         <View style={styles.menuGroup}>
           <ProfileCard title="My Orders" iconName="package-variant-closed" />
-          <ProfileCard title="Favorites" iconName="heart-outline" />
+          <ProfileCard
+            title="Favorites"
+            iconName="heart-outline"
+            onPressFunction={() => navigation.navigate('Favorites')}
+          />
         </View>
 
         <View style={styles.menuGroup}>
-          <ProfileCard title="Support Center" iconName="headphones" navigationTarget={'Support_Center'} />
+          <ProfileCard
+            title="Support Center"
+            iconName="headphones"
+            navigationTarget={'Support_Center'}
+          />
           <ProfileCard
             title="About Us"
             iconName="information-outline"

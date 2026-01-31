@@ -38,10 +38,15 @@ import MyProfile from '../screens/profile-screen/sub-screens/MyProfile';
 import EmailVerification from '../screens/profile-screen/sub-screens/EmailVerification';
 import About from '../screens/profile-screen/sub-screens/About';
 import Support from '../screens/profile-screen/sub-screens/Support';
+import Favorites from '../screens/profile-screen/sub-screens/Favorites';
 
 // Product Category
 import ProductCategory from '../screens/products/product-category/ProductCategory';
 import ProductDetails from '../screens/products/product-detail/ProductDetails';
+import ProductReview from '../screens/products/product-review/ProductReview'
+
+// Cart 
+import Cart from '../screens/cart-screen/Cart'
 
 const Stack = createNativeStackNavigator();
 
@@ -117,6 +122,12 @@ const AppNavigator = () => {
           )}
         </Stack.Screen>
 
+        <Stack.Screen name="Favorites">
+          {props => (
+            <Favorites {...props} setStatusBarColor={setStatusBarColor} />
+          )}
+        </Stack.Screen>
+
         {/* --- PRODUCT CATEGORIES --- */}
         <Stack.Screen name="Product_Category">
           {props => (
@@ -129,6 +140,20 @@ const AppNavigator = () => {
             <ProductDetails {...props} setStatusBarColor={setStatusBarColor} />
           )}
         </Stack.Screen>
+
+         <Stack.Screen name="Product_Reviews">
+          {props => (
+            <ProductReview {...props} setStatusBarColor={setStatusBarColor} />
+          )}
+        </Stack.Screen>
+
+        {/* --- CART --- */}
+        <Stack.Screen name="Cart">
+          {props => (
+            <Cart {...props} setStatusBarColor={setStatusBarColor} />
+          )}
+        </Stack.Screen>
+
       </Stack.Navigator>
     </>
   );

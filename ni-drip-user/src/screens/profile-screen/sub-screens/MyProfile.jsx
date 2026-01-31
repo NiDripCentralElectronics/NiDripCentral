@@ -94,26 +94,34 @@ const MyProfile = () => {
     }, 1000);
   });
 
-  const handleUpdateProfile = async (data, setModalVisible) => {
+  const handleUpdateProfile = async (formData, setModalVisible) => {
     try {
-      const response = await dispatch(
+      const resultAction = await dispatch(
         updateUser({
           userId: user?.id || user?._id,
-          formData: data,
+          formData,
         }),
-      ).unwrap();
+      );
 
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: response?.message || 'Profile updated successfully!',
-      });
-      setModalVisible(false);
-    } catch (error) {
+      if (updateUser.fulfilled.match(resultAction)) {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: resultAction.payload?.message,
+        });
+        setModalVisible(false);
+      } else if (updateUser.rejected.match(resultAction)) {
+        Toast.show({
+          type: 'error',
+          text1: 'Update Failed',
+          text2: resultAction.payload?.message || 'Failed to update profile',
+        });
+      }
+    } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Update Failed',
-        text2: error?.message || 'Failed to update profile',
+        text1: 'Unexpected Error',
+        text2: err?.message || 'Something went wrong',
       });
     }
   };
@@ -127,23 +135,33 @@ const MyProfile = () => {
         name: `profile_${Date.now()}.jpg`,
       });
 
-      const response = await dispatch(
+      const resultAction = await dispatch(
         updateUser({
           userId: user?.id || user?._id,
           formData,
         }),
-      ).unwrap();
+      );
 
-      Toast.show({
-        type: 'success',
-        text1: 'Success',
-        text2: response?.message || 'Profile picture updated successfully!',
-      });
-    } catch (error) {
+      if (updateUser.fulfilled.match(resultAction)) {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: resultAction.payload?.message,
+        });
+      } else if (updateUser.rejected.match(resultAction)) {
+        Toast.show({
+          type: 'error',
+          text1: 'Update Failed',
+          text2:
+            resultAction.payload?.message ||
+            'Failed to update profile picture.',
+        });
+      }
+    } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Update Failed',
-        text2: error?.message || 'Failed to update profile picture.',
+        text1: 'Unexpected Error',
+        text2: err?.message || 'Something went wrong.',
       });
     } finally {
       setShowImageUploadModal(false);
@@ -254,18 +272,28 @@ const MyProfile = () => {
 
   const handleVerifyEmail = async () => {
     try {
-      const response = await dispatch(requestEmailVerification()).unwrap();
-      Toast.show({
-        type: 'success',
-        text1: 'OTP Sent',
-        text2: response?.message || 'Please check your email.',
-      });
-      navigation.navigate('Email_Verification');
-    } catch (error) {
+      const resultAction = await dispatch(requestEmailVerification());
+
+      if (requestEmailVerification.fulfilled.match(resultAction)) {
+        Toast.show({
+          type: 'success',
+          text1: 'OTP Sent',
+          text2: resultAction.payload?.message,
+        });
+        navigation.navigate('Email_Verification');
+      } else if (requestEmailVerification.rejected.match(resultAction)) {
+        Toast.show({
+          type: 'error',
+          text1: 'Request Failed',
+          text2:
+            resultAction.payload?.message || 'Failed to send verification code',
+        });
+      }
+    } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Request Failed',
-        text2: error?.message || 'Failed to send verification code',
+        text1: 'Unexpected Error',
+        text2: err?.message || 'Something went wrong',
       });
     }
   };

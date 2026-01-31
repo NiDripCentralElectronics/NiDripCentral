@@ -86,7 +86,14 @@ exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.find()
       .populate("addedBy", "userName email")
-      .populate("reviews.user", "profilePicture userName email") // Deep populate user in reviews
+      .populate({
+        path: "reviews.user",
+        select: "id profilePicture userName email",
+      })
+      .populate({
+        path: "ratings.user",
+        select: "id profilePicture userName email",
+      })
       .sort({ createdAt: -1 });
 
     if (!products.length) {

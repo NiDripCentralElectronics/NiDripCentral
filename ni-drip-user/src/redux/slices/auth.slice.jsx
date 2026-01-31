@@ -18,7 +18,7 @@
  * - Optional server-side token verification on checkAuth
  *
  * Exports:
- * - Thunks: registerUser, loginUser, logoutUser, checkAuth
+ * - Thunks: registerUser, loginUser, logoutUser, checkAuth, forgotPassword, resetPassword
  * - Action: clearAuthState (manual reset)
  * - Reducer: default export for store configuration
  */
@@ -44,19 +44,21 @@ export const registerUser = createAsyncThunk(
         { headers: { 'Content-Type': 'multipart/form-data' } },
       );
 
-      const { message, success } = response.data;
+      const { message, success, user } = response.data;
 
       if (typeof success !== 'boolean') {
         throw new Error('Invalid registration response');
       }
 
-      return { message, success };
+      // Return user if backend provides it; always return message
+      return { message, success, user: user ?? null };
     } catch (error) {
       const backend = error.response?.data;
 
       return rejectWithValue({
         message: backend?.message || error.message || 'Registration failed',
         success: backend?.success ?? false,
+        status: error.response?.status || 0,
       });
     }
   },
@@ -83,7 +85,7 @@ export const loginUser = createAsyncThunk(
 
       await AsyncStorage.setItem('authToken', token);
 
-      return { user, token, message };
+      return { user, token, message, success: true };
     } catch (error) {
       const backend = error.response?.data;
 
@@ -100,7 +102,6 @@ export const loginUser = createAsyncThunk(
  * Forgot Password
  * @param {Object} data - { email, role }
  */
-
 export const forgotPassword = createAsyncThunk(
   'user/forgot-password',
   async ({ email }, { rejectWithValue }) => {
@@ -115,9 +116,9 @@ export const forgotPassword = createAsyncThunk(
 
       const { message, success } = response.data;
 
-      if (!success) throw new Error(message);
+      if (!success) throw new Error(message || 'Forgot password failed');
 
-      return { message };
+      return { message, success: true };
     } catch (error) {
       const backend = error.response?.data;
 
@@ -132,9 +133,8 @@ export const forgotPassword = createAsyncThunk(
 
 /**
  * Reset Password
- * @param {Object} data - { newPassword, role }
+ * @param {Object} data - { newPassword, token }
  */
-
 export const resetPassword = createAsyncThunk(
   'user/reset-password',
   async ({ newPassword, token }, { rejectWithValue }) => {
@@ -149,9 +149,9 @@ export const resetPassword = createAsyncThunk(
 
       const { message, success } = response.data;
 
-      if (!success) throw new Error(message);
+      if (!success) throw new Error(message || 'Reset failed');
 
-      return { message };
+      return { message, success: true };
     } catch (error) {
       const backend = error.response?.data;
 
@@ -182,14 +182,16 @@ export const logoutUser = createAsyncThunk(
       );
 
       await AsyncStorage.removeItem('authToken');
-      
-      // Return the whole data object from backend
-      return response.data; 
+
+      // Return backend data (likely includes message)
+      return response.data;
     } catch (error) {
+      // ensure local logout even if server fails
       await AsyncStorage.removeItem('authToken');
 
+      const backend = error.response?.data;
       return rejectWithValue(
-        error.response?.data?.message || 'Logout failed'
+        backend?.message || error.message || 'Logout failed',
       );
     }
   },
@@ -204,7 +206,7 @@ export const checkAuth = createAsyncThunk(
     try {
       const token = await AsyncStorage.getItem('authToken');
       if (!token) {
-        return { isAuthenticated: false };
+        return { isAuthenticated: false, message: 'No token found' };
       }
 
       const response = await axios.get(`${BACKEND_API_URL}/user/me`, {
@@ -215,10 +217,15 @@ export const checkAuth = createAsyncThunk(
         isAuthenticated: true,
         user: response.data.user,
         token,
+        message: response.data.message ?? 'Authenticated',
       };
     } catch (error) {
       await AsyncStorage.removeItem('authToken');
-      return rejectWithValue({ isAuthenticated: false });
+      const backend = error.response?.data;
+      return rejectWithValue({
+        isAuthenticated: false,
+        message: backend?.message || error.message || 'Auth check failed',
+      });
     }
   },
 );
@@ -230,6 +237,13 @@ const initialState = {
   loading: false,
   error: null,
   message: null,
+};
+
+const getMessageFromPayload = actionPayload => {
+  if (!actionPayload) return null;
+  if (typeof actionPayload === 'string') return actionPayload;
+  if (actionPayload.message) return actionPayload.message;
+  return null;
 };
 
 const authSlice = createSlice({
@@ -246,6 +260,7 @@ const authSlice = createSlice({
   },
   extraReducers: builder => {
     builder
+      // registerUser
       .addCase(registerUser.pending, state => {
         state.loading = true;
         state.error = null;
@@ -253,14 +268,23 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.message = action.payload.message;
+        // backend may or may not send a user object on registration
+        if (action.payload?.user) {
+          state.user = action.payload.user;
+        }
+        state.message = action.payload?.message ?? null;
+        state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? action.error?.message;
+        state.message =
+          getMessageFromPayload(action.payload) ??
+          action.error?.message ??
+          null;
       })
 
+      // loginUser
       .addCase(loginUser.pending, state => {
         state.loading = true;
         state.error = null;
@@ -271,45 +295,113 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = !!action.payload.token;
-        state.message = action.payload.message;
+        state.message = action.payload?.message ?? null;
+        state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? action.error?.message;
+        state.message =
+          getMessageFromPayload(action.payload) ??
+          action.error?.message ??
+          null;
       })
 
+      // forgotPassword
+      .addCase(forgotPassword.pending, state => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload?.message ?? 'Password reset email sent';
+        state.error = null;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? action.error?.message;
+        state.message =
+          getMessageFromPayload(action.payload) ??
+          action.error?.message ??
+          null;
+      })
+
+      // resetPassword
+      .addCase(resetPassword.pending, state => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload?.message ?? 'Password reset successful';
+        state.error = null;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? action.error?.message;
+        state.message =
+          getMessageFromPayload(action.payload) ??
+          action.error?.message ??
+          null;
+      })
+
+      // logoutUser
       .addCase(logoutUser.pending, state => {
         state.loading = true;
+        state.message = null;
+        state.error = null;
       })
-      .addCase(logoutUser.fulfilled, state => {
+      .addCase(logoutUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
-        state.message = 'Logged out successfully';
+        state.message = action.payload?.message ?? 'Logged out successfully';
+        state.error = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload ?? action.error?.message;
+        state.message =
+          getMessageFromPayload(action.payload) ??
+          action.error?.message ??
+          null;
+        // still ensure local state is cleared
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
       })
 
+      // checkAuth
       .addCase(checkAuth.pending, state => {
         state.loading = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(checkAuth.fulfilled, (state, action) => {
         state.loading = false;
         state.isAuthenticated = action.payload.isAuthenticated;
+        state.message = action.payload?.message ?? null;
         if (action.payload.isAuthenticated) {
           state.user = action.payload.user;
           state.token = action.payload.token;
+        } else {
+          state.user = null;
+          state.token = null;
         }
       })
-      .addCase(checkAuth.rejected, state => {
+      .addCase(checkAuth.rejected, (state, action) => {
         state.loading = false;
         state.isAuthenticated = false;
+        state.user = null;
+        state.token = null;
+        state.error = action.payload ?? action.error?.message;
+        state.message =
+          getMessageFromPayload(action.payload) ??
+          action.error?.message ??
+          null;
       });
   },
 });

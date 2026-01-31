@@ -43,10 +43,10 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-      StatusBar.setBarStyle('light-content');
-      StatusBar.setTranslucent(true);
-      StatusBar.setBackgroundColor('transparent');
-    }, []);
+    StatusBar.setBarStyle('light-content');
+    StatusBar.setTranslucent(true);
+    StatusBar.setBackgroundColor('transparent');
+  }, []);
 
   useEffect(() => {
     const hasErrors = emailError || passwordError || !email || !password;
@@ -69,90 +69,71 @@ const Signin = () => {
     setLoading(true);
 
     try {
-      const loginData = { email, password };
-      const resultAction = await dispatch(loginUser(loginData));
+      const resultAction = await dispatch(loginUser({ email, password }));
 
       if (loginUser.fulfilled.match(resultAction)) {
-        const successMessage =
-          resultAction.payload?.message || 'Login successful';
+        const message = resultAction.payload?.message;
 
         Toast.show({
           type: 'success',
-          text1: 'Welcome Back!',
-          text2: successMessage,
-          position: 'top',
-          visibilityTime: 3000,
+          text1: 'Sucess',
+          text2: message,
         });
 
         setTimeout(() => {
           navigation.replace('Main');
-        }, 1500);
+        }, 1200);
 
         setEmail('');
         setPassword('');
-      } else if (loginUser.rejected.match(resultAction)) {
-        const errorPayload = resultAction.payload;
-        const errorMessage =
-          errorPayload?.message || 'Login failed. Please try again.';
+        return;
+      }
 
-        if (
-          errorPayload?.status === 423 &&
-          errorPayload?.message?.includes('Account locked')
-        ) {
+      if (loginUser.rejected.match(resultAction)) {
+        const payload = resultAction.payload || {};
+        const message = payload.message || 'Authentication failed';
+        const status = payload.status;
+
+        if (status === 423 && message.includes('Account locked')) {
           Toast.show({
             type: 'error',
             text1: 'Account Locked',
-            text2: errorPayload.message,
-            position: 'top',
-            visibilityTime: 6000,
+            text2: message,
           });
           return;
         }
 
-        if (
-          errorPayload?.status === 423 &&
-          errorPayload?.message?.includes('Too many failed')
-        ) {
+        if (status === 423 && message.includes('Too many')) {
           Toast.show({
             type: 'error',
             text1: 'Too Many Attempts',
-            text2: errorPayload.message,
-            position: 'top',
-            visibilityTime: 6000,
+            text2: message,
           });
           return;
         }
 
-        if (errorPayload?.attempts !== undefined) {
-          const remainingAttempts = 3 - errorPayload.attempts;
+        if (typeof payload.attempts === 'number') {
+          const remaining = Math.max(0, 3 - payload.attempts);
 
-          if (remainingAttempts > 0) {
-            Toast.show({
-              type: 'error',
-              text1: errorMessage,
-              text2: `${remainingAttempts} attempts remaining`,
-              position: 'top',
-              visibilityTime: 5000,
-            });
-            return;
-          }
+          Toast.show({
+            type: 'error',
+            text1: message,
+            text2: remaining ? `${remaining} attempts remaining` : message,
+          });
+          return;
         }
 
         Toast.show({
           type: 'error',
           text1: 'Login Failed',
-          text2: errorMessage,
-          position: 'top',
-          visibilityTime: 124000,
+          text2: message,
         });
       }
     } catch (err) {
       Toast.show({
         type: 'error',
         text1: 'Unexpected Error',
-        text2: err?.message || 'Something went wrong. Please try again later.',
-        position: 'top',
-        visibilityTime: 5000,
+        text2: err?.message || 'Unexpected error',
       });
     } finally {
       setLoading(false);

@@ -17,8 +17,11 @@ import {
   addToFavorites,
   removeFromFavorites,
 } from '../../../redux/slices/favorite.slice';
+import { addToCart } from '../../../redux/slices/cart.slice';
+import { setProducts } from '../../../redux/slices/product.slice';
 import { theme } from '../../../styles/Themes';
 import Button from '../../../utilities/custom-components/button/Button.utility';
+import Toast from 'react-native-toast-message';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,18 +30,36 @@ const ProductDetails = () => {
   const navigation = useNavigation();
   const { product } = route.params;
 
+  console.log('Product', product);
+
   const dispatch = useDispatch();
   const favorites = useSelector(state => state.favorites.favorites || []);
   const isFavorite = favorites.some(fav => fav.productId?._id === product._id);
+  const { loading: cartLoading } = useSelector(state => state.cart);
 
   const [activeSlide, setActiveSlide] = useState(0);
   const heartRef = useRef(null);
+
+  useEffect(() => {
+    if (route.params?.product) {
+      setProducts(route.params.product);
+    }
+  }, [route.params]);
 
   useEffect(() => {
     if (isFavorite) {
       heartRef.current?.bounceIn(800);
     }
   }, [isFavorite]);
+
+  const handleGoToReviews = () => {
+    navigation.navigate('Product_Reviews', {
+      product: product,
+      onReviewSubmit: updatedProduct => {
+        setProducts(updatedProduct);
+      },
+    });
+  };
 
   const handleScroll = event => {
     const slide = Math.round(event.nativeEvent.contentOffset.x / width);
@@ -50,6 +71,32 @@ const ProductDetails = () => {
       dispatch(removeFromFavorites(product._id));
     } else {
       dispatch(addToFavorites(product._id));
+    }
+  };
+
+  const handleAddToCart = async () => {
+    try {
+      const resultAction = await dispatch(
+        addToCart({ productId: product._id, quantity: 1 }),
+      );
+
+      if (addToCart.fulfilled.match(resultAction)) {
+        Toast.show({
+          type: 'success',
+          text1: 'Success',
+          text2: 'Item added to your cart! 🛒',
+        });
+      } else {
+        const errorMsg =
+          resultAction.payload?.message || 'Failed to add to cart';
+        Toast.show({
+          type: 'error',
+          text1: 'Oops!',
+          text2: errorMsg,
+        });
+      }
+    } catch (err) {
+      console.error('Cart Error:', err);
     }
   };
 
@@ -154,7 +201,10 @@ const ProductDetails = () => {
         <View style={styles.infoSection}>
           <View style={styles.reviewHeaderRow}>
             <Text style={styles.sectionHeading}>
-              Ratings & Reviews ({product.totalReviews || 0})
+              Ratings & Reviews{' '}
+              <Text style={styles.countText}>
+                ({product.totalReviews || 0})
+              </Text>
             </Text>
             <View style={styles.avgRatingBadge}>
               <Text style={styles.avgRatingText}>
@@ -162,43 +212,69 @@ const ProductDetails = () => {
               </Text>
               <MaterialCommunityIcons
                 name="star"
-                size={width * 0.04}
+                size={width * 0.045}
                 color="#FFB800"
               />
+              <TouchableOpacity activeOpacity={0.6} onPress={handleGoToReviews}>
+                ,
+                <MaterialCommunityIcons
+                  name="chevron-right"
+                  size={width * 0.06}
+                  color={theme.colors.dark}
+                />
+              </TouchableOpacity>
             </View>
           </View>
 
           {product.reviews && product.reviews.length > 0 ? (
-            product.reviews.map((rev, index) => (
-              <View key={rev._id || index} style={styles.reviewCard}>
-                <View style={styles.reviewMeta}>
-                  <View style={styles.starBoxSmall}>
-                    {[1, 2, 3, 4, 5].map(s => (
-                      <MaterialCommunityIcons
-                        key={s}
-                        name={s <= (rev.rating || 0) ? 'star' : 'star-outline'}
-                        size={width * 0.035}
-                        color="#FFB800"
-                      />
-                    ))}
+            product.reviews.slice(0, 4).map((rev, index) => {
+              const reviewStars =
+                product.ratings?.find(r => {
+                  const rvUserId = rev?.user?._id || rev?.user;
+                  const rUserId = r?.user?._id || r?.user;
+                  return (
+                    rvUserId &&
+                    rUserId &&
+                    rvUserId.toString() === rUserId.toString()
+                  );
+                })?.stars || 0;
+
+              return (
+                <Animatable.View
+                  key={rev._id || index}
+                  animation="fadeInUp"
+                  delay={index * 50}
+                  style={styles.reviewCard}
+                >
+                  <Text style={styles.reviewComment}>{rev.reviewText}</Text>
+
+                  <View style={styles.reviewMeta}>
+                    <View style={styles.starBoxSmall}>
+                      {[1, 2, 3, 4, 5].map(s => (
+                        <MaterialCommunityIcons
+                          key={s}
+                          name={s <= reviewStars ? 'star' : 'star-outline'}
+                          size={width * 0.032}
+                          color="#FFB800"
+                        />
+                      ))}
+                    </View>
+
+                    <Text style={styles.reviewerName}>
+                      {rev?.user?.userName || 'Anonymous'}
+                    </Text>
                   </View>
-                  <Text style={styles.reviewerName}>
-                    {rev.userName || 'Verified User'}
-                  </Text>
-                </View>
-                <Text style={styles.reviewComment} numberOfLines={3}>
-                  {rev.comment}
-                </Text>
-              </View>
-            ))
+                </Animatable.View>
+              );
+            })
           ) : (
             <View style={styles.noReviewBox}>
-              <Text style={styles.noReviewText}>No reviews yet</Text>
+              <Text style={styles.noReviewText}>
+                No Reviews For This Product Yet!
+              </Text>
             </View>
           )}
         </View>
-
-        <View style={styles.gap} />
 
         <View style={styles.gap} />
 
@@ -232,8 +308,9 @@ const ProductDetails = () => {
 
         <View style={styles.buttonGroup}>
           <Button
-            title="Add to Cart"
-            onPress={() => {}}
+            title={cartLoading ? 'Adding...' : 'Add to Cart'}
+            onPress={handleAddToCart}
+            disabled={cartLoading || product.stock < 1} // Disable if out of stock or loading
             width={100}
             backgroundColor={theme.colors.gray}
             textColor={theme.colors.dark}
@@ -378,24 +455,24 @@ const styles = StyleSheet.create({
   reviewMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: height * 0.01,
   },
 
   starBoxSmall: {
     flexDirection: 'row',
-    marginRight: 8,
+    marginRight: width * 0.02,
   },
 
   reviewerName: {
-    fontSize: 14,
-    color: '#718096',
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.dark,
     fontFamily: theme.typography.medium,
   },
 
   reviewComment: {
-    fontSize: 15,
+    fontSize: theme.typography.fontSize.xs,
     color: theme.colors.dark,
-    fontFamily: theme.typography.regular,
+    fontFamily: theme.typography.medium,
     lineHeight: 20,
   },
 

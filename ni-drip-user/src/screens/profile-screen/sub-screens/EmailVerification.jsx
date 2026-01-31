@@ -58,7 +58,7 @@ const EmailVerification = () => {
   const isButtonEnabled = otp.every(digit => digit !== '');
 
   useEffect(() => {
-    StatusBar.setBarStyle('light-content');    
+    StatusBar.setBarStyle('light-content');
     StatusBar.setBackgroundColor('transparent');
   }, []);
 
@@ -98,18 +98,28 @@ const EmailVerification = () => {
 
     setLoading(true);
     try {
-      await dispatch(verifyEmail(otpString)).unwrap();
-      Toast.show({
-        type: 'success',
-        text1: 'Account Verified',
-        text2: 'Welcome aboard! Your email is now secure.',
-      });
-      navigation.goBack();
-    } catch (error) {
+      const resultAction = await dispatch(verifyEmail(otpString));
+
+      if (verifyEmail.fulfilled.match(resultAction)) {
+        Toast.show({
+          type: 'success',
+          text1: 'Account Verified',
+          text2: resultAction.payload?.message,
+        });
+        navigation.goBack();
+      } else if (verifyEmail.rejected.match(resultAction)) {
+        Toast.show({
+          type: 'error',
+          text1: 'Verification Failed',
+          text2:
+            resultAction.payload?.message || 'Failed to verify your email.',
+        });
+      }
+    } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Verification Failed',
-        text2: error.message,
+        text1: 'Unexpected Error',
+        text2: err?.message || 'Something went wrong.',
       });
     } finally {
       setLoading(false);
@@ -118,21 +128,33 @@ const EmailVerification = () => {
 
   const handleResend = async () => {
     if (timer > 0) return;
+
     try {
-      await dispatch(requestEmailVerification()).unwrap();
-      setTimer(59);
-      setOtp(['', '', '', '', '', '']);
-      inputRefs.current[0].focus();
-      Toast.show({
-        type: 'info',
-        text1: 'Code Resent',
-        text2: 'A new OTP has been dispatched to your inbox.',
-      });
-    } catch (error) {
+      const resultAction = await dispatch(requestEmailVerification());
+
+      if (requestEmailVerification.fulfilled.match(resultAction)) {
+        Toast.show({
+          type: 'info',
+          text1: 'Code Resent',
+          text2: resultAction.payload?.message,
+        });
+        setTimer(59);
+        setOtp(['', '', '', '', '', '']);
+        inputRefs.current[0]?.focus();
+      } else if (requestEmailVerification.rejected.match(resultAction)) {
+        Toast.show({
+          type: 'error',
+          text1: 'Request Failed',
+          text2:
+            resultAction.payload?.message ||
+            'Failed to resend the verification code.',
+        });
+      }
+    } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Request Failed',
-        text2: error.message,
+        text1: 'Unexpected Error',
+        text2: err?.message || 'Something went wrong.',
       });
     }
   };

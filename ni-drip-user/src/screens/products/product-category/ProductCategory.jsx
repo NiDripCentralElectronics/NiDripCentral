@@ -86,7 +86,7 @@ const ProductCategory = ({ route, navigation }) => {
       <ProductCard
         product={item}
         onPress={() => {
-          console.log(item)
+          console.log(item);
           navigation.navigate('Product_Details', { product: item });
         }}
       />

@@ -34,21 +34,18 @@ const ratingSchema = new mongoose.Schema(
  * @property {ObjectId} user       - User who wrote the review
  * @property {string}   reviewText - Review text content
  */
-const reviewSchema = new mongoose.Schema(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    reviewText: {
-      type: String,
-      trim: true,
-      default: "",
-    },
+const reviewSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
-  { _id: false },
-);
+  reviewText: {
+    type: String,
+    trim: true,
+    default: "",
+  },
+});
 
 /**
  * Schema for products
@@ -195,7 +192,7 @@ const productSchema = new mongoose.Schema(
           },
         },
       ],
-      default: [],      
+      default: [],
     },
   },
   {
