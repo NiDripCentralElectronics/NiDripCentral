@@ -77,4 +77,15 @@ router.put(
   orderController.updateOrderStatus,
 );
 
+/**
+ * @description Delete an order
+ * @route DELETE /api/order/delete-order/:orderId
+ * @access Protected
+ */
+router.delete(
+  "/delete-order/:orderId",
+  encryptedAuthMiddleware,
+  orderController.deleteOrder,
+);
+
 module.exports = router;

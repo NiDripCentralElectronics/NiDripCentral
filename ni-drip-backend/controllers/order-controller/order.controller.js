@@ -561,3 +561,53 @@ exports.updateOrderStatus = async (req, res) => {
     });
   }
 };
+
+/**
+ * Delete an order permanently (SuperAdmin only)
+ * @description Removes the order record and cleans up the reference in the User's order history.
+ * @access Private (SuperAdmin)
+ */
+exports.deleteOrder = async (req, res) => {
+  try {
+    // 1. Authorization Check
+    if (req.user.role !== "SUPERADMIN") {
+      return res.status(403).json({
+        success: false,
+        message: "SuperAdmin access required to delete orders",
+      });
+    }
+
+    const { orderId } = req.params;
+
+    // 2. Find the order first to get the associated User ID
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    const userId = order.user;
+
+    // 3. Remove the order reference from the User's order history array
+    await User.findByIdAndUpdate(userId, {
+      $pull: { orders: { orderId: orderId } },
+    });
+
+    // 4. Delete the order from the database
+    await Order.findByIdAndDelete(orderId);
+
+    res.status(200).json({
+      success: true,
+      message: "Order deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete order error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};

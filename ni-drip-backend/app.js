@@ -13,8 +13,6 @@ const {
   securityMiddleware,
 } = require("./middlewares/security-middleware/security.middleware");
 
-const startOrderCleanupJob = require("./helpers/cron-jobs/order-cleanup.cron");
-
 const app = express();
 
 // ==================================================
@@ -53,12 +51,6 @@ app.get("/api/health", (req, res) => {
     environment: process.env.NODE_ENV || "development",
   });
 });
-
-// ────────────────────────────────────────────────────────
-// INITIALIZE CRON JOBS
-// ────────────────────────────────────────────────────────
-startOrderCleanupJob();
-console.log("Weekly Order Cleanup Job has been scheduled.");
 
 // ==================================================
 // Import Routes

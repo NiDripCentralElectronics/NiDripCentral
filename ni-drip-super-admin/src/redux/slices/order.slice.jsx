@@ -112,6 +112,51 @@ export const updateOrderStatus = createAsyncThunk(
   },
 );
 
+/**
+ * @function deleteOrder
+ * @async
+ * @description Permanently deletes an order and updates the local state.
+ * @param {string} orderId
+ */
+export const deleteOrder = createAsyncThunk(
+  "order/deleteOrder",
+  async (orderId, { rejectWithValue }) => {
+    const token = getToken();
+
+    if (!token)
+      return rejectWithValue({
+        message: "Admin is not authenticated.",
+        success: false,
+      });
+
+    try {
+      const response = await axios.delete(
+        `${BACKEND_API_URL}/order/delete-order/${orderId}`, // Match this to your backend route
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+
+      const { message, success } = response.data;
+
+      if (!success) throw new Error(message);
+
+      return {
+        success: true,
+        message,
+        orderId, // We return this to filter the state
+      };
+    } catch (error) {
+      const backendError = error.response?.data;
+      return rejectWithValue({
+        message: backendError?.message || error.message,
+        success: false,
+        status: error.response?.status || 0,
+      });
+    }
+  },
+);
+
 const orderSlice = createSlice({
   name: "orders",
   initialState: {
@@ -168,6 +213,29 @@ const orderSlice = createSlice({
         state.loading = false;
         state.error =
           action.payload?.message || "Failed to update order status";
+        state.success = false;
+      })
+
+      /* Delete Order Cases */
+      .addCase(deleteOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        const deletedOrderId = action.payload.orderId;
+
+        // Remove the order from the local list immediately
+        state.allOrders = state.allOrders.filter(
+          (order) => order._id !== deletedOrderId,
+        );
+
+        state.message = action.payload.message;
+        state.success = true;
+      })
+      .addCase(deleteOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to delete order";
         state.success = false;
       });
   },

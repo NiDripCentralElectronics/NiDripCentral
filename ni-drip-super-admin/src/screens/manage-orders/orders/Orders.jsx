@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import {
   getAllOrders,
   updateOrderStatus,
+  deleteOrder,
 } from "../../../redux/slices/order.slice";
 import Loader from "../../../utilities/loader/Loader.utility";
 import PopOver from "../../../utilities/pop-over/PopOver.utility";
@@ -41,6 +42,8 @@ const Orders = () => {
   const loading = useSelector((state) => state.orders.loading);
   const [activePopover, setActivePopover] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletingOrder, setDeletingOrder] = useState(false);
 
   const [isOrderStatusModalOpen, setIsOrderStatusModalOpen] = useState(false);
   const [isPaymentStatusModalOpen, setIsPaymentStatusModalOpen] =
@@ -193,10 +196,33 @@ const Orders = () => {
       icon: "fas fa-trash",
       type: "danger",
       action: () => {
-        /* implement delete if required */
+        setSelectedOrder(order);
+        setIsDeleteModalOpen(true);
+        setActivePopover(null);
       },
     });
     return items;
+  };
+
+  const handleDeleteOrder = async () => {
+    if (!selectedOrder) return;
+
+    setDeletingOrder(true);
+    try {
+      const result = await dispatch(deleteOrder(selectedOrder._id));
+
+      if (deleteOrder.fulfilled.match(result)) {
+        toast.success(result.payload?.message);
+        setIsDeleteModalOpen(false);
+        setSelectedOrder(null);
+      } else {
+        toast.error(result.payload?.message || "Failed to delete order");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred during deletion");
+    } finally {
+      setDeletingOrder(false);
+    }
   };
 
   const getStatusClass = (status) => {
@@ -419,6 +445,49 @@ const Orders = () => {
         ) : (
           <p>Payment status cannot be updated further.</p>
         )}
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Confirm Delete"
+        buttons={[
+          {
+            label: "Cancel",
+            className: "cancel-btn",
+            onClick: () => setIsDeleteModalOpen(false),
+          },
+          {
+            label: "Delete Permanently",
+            className: "danger-btn", // Ensure you have a red style for this
+            onClick: handleDeleteOrder,
+            loading: deletingOrder,
+          },
+        ]}
+      >
+        <div className="delete-confirm-content">
+          <p>
+            Are you sure you want to delete order
+            <strong>
+              {selectedOrder?._id
+                ? ` #${selectedOrder._id.slice(-6).toUpperCase()}`
+                : ""}
+            </strong>
+            ?
+          </p>
+          <p
+            className="warning-text"
+            style={{
+              color: "var(--danger-color)",
+              marginTop: "10px",
+              fontSize: "0.9rem",
+            }}
+          >
+            <i className="fas fa-exclamation-triangle"></i> This action is
+            permanent and will remove the order from the customer's history.
+          </p>
+        </div>
       </Modal>
     </section>
   );

@@ -194,6 +194,33 @@
   margin-left: 20px;
 }
 
+#orders .no-orders-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  gap: 12px;
+}
+
+#orders .no-orders-icon {
+  font-size: 48px;
+  opacity: 0.4;
+}
+
+#orders .no-orders-state h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+#inventory .no-orders-state p {
+  margin: 0;
+  opacity: 0.6;
+  max-width: 320px;
+}
+
+
 @media (max-width: 1024px) {
   #orders .stats-grid {
     grid-template-columns: repeat(3, 1fr);
