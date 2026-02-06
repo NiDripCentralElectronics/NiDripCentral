@@ -16,10 +16,10 @@
 
 const CONFIG = {
   /** Dev Backend API Url */
-  BACKEND_API_URL: 'http://192.168.1.14:8000/api',  
+  // BACKEND_API_URL: 'http://192.168.1.14:8000/api',  
 
   /** Prod Backend API Url */
-  // BACKEND_API_URL: 'https://ni-drip-backend.vercel.app/api',
+  BACKEND_API_URL: 'https://ni-drip-central.vercel.app/api',
 
   /** Stripe Publishable Key */
   // STRIPE_PUBLISHABLE_KEY:
