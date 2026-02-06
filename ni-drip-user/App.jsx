@@ -8,6 +8,7 @@
  * - Mounting the primary navigation structure via {@link RootNavigator}
  * - Initializing the global toast notification system (react-native-toast-message)
  *   with clean, modern, and consistent custom styling aligned to the application's design system
+ * - Setting up Stripe payment provider for payment processing
  *
  * Enhanced toast features:
  * - Unified custom toast rendering via BaseToast for success & error (no more duplication)
@@ -20,8 +21,10 @@ import React from 'react';
 import { Dimensions } from 'react-native';
 import RootNavigator from './src/navigation/RootNavigator';
 import Toast, { BaseToast } from 'react-native-toast-message';
+import { StripeProvider } from '@stripe/stripe-react-native';
 import { theme } from './src/styles/Themes';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import CONFIG from './src/redux/config/Config';
 
 const { width, height } = Dimensions.get('window');
 
@@ -85,11 +88,15 @@ const toastConfig = {
 
 const App = () => {
   return (
-    <>
+    <StripeProvider
+      publishableKey={CONFIG.STRIPE_PUBLISHABLE_KEY}
+      merchantIdentifier="merchant.com.nidrip"
+    >
       <RootNavigator />
       <Toast config={toastConfig} />
-    </>
+    </StripeProvider>
   );
 };
 
 export default App;
+

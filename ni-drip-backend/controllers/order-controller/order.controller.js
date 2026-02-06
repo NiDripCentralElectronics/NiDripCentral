@@ -8,9 +8,8 @@
 const Order = require("../../models/order-model/order.model");
 const User = require("../../models/user-model/user.model");
 const Product = require("../../models/product-model/product.model");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const {
-  sendOrderConfirmationToUser,
-  sendNewOrderNotificationToAdmin,
   sendOrderCancellationToUser,
   sendOrderCancellationToAdmin,
   sendOrderStatusUpdateEmail,
@@ -174,9 +173,26 @@ exports.placeOrder = async (req, res) => {
       shippingAddress: finalShippingAddress,
       shippingCost: Number(shippingCost),
       status: "PENDING",
-      paymentMethod: "PAY_ON_DELIVERY",
+      paymentMethod: "STRIPE",
       paymentStatus: "PENDING",
     });
+
+    // Create Stripe PaymentIntent
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(totalAmount * 100), // Convert to cents
+      currency: "usd", // Change as needed
+      metadata: {
+        orderId: order._id.toString(),
+        userId: userId,
+      },
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    // Save PaymentIntent ID to order
+    order.stripePaymentIntentId = paymentIntent.id;
+    await order.save();
 
     // Update user's order history
     user.orders.push({
@@ -189,7 +205,7 @@ exports.placeOrder = async (req, res) => {
 
     await user.save();
 
-    // Populate order for email and response
+    // Populate order for response (emails will be sent after payment via webhook)
     const populatedOrder = await Order.findById(order._id)
       .populate({
         path: "items.product",
@@ -197,14 +213,13 @@ exports.placeOrder = async (req, res) => {
       })
       .populate("user", "userName email phone");
 
-    // Send emails
-    await sendOrderConfirmationToUser(populatedOrder);
-    await sendNewOrderNotificationToAdmin(populatedOrder);
+    // Note: Email notifications are now sent after successful payment via Stripe webhook
 
     res.status(201).json({
       success: true,
-      message: "Order placed successfully! Confirmation email sent.",
+      message: "Order placed successfully! Complete payment to confirm your order.",
       order: populatedOrder,
+      clientSecret: paymentIntent.client_secret,
       summary: {
         subtotal,
         shippingCost: Number(shippingCost),

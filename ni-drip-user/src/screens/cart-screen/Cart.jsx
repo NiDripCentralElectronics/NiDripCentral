@@ -1,7 +1,7 @@
 /**
  * @fileoverview Shopping Cart Screen
  * @module screens/cart/CartScreen
- * @description Displays cart items, handles quantity updates, removal, and checkout navigation.
+ * @description Displays cart items, handles quantity updates, removal, and Stripe checkout.
  */
 
 import React, { useEffect, useState, useRef } from 'react';
@@ -19,6 +19,7 @@ import {
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import { useStripe } from '@stripe/stripe-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Toast from 'react-native-toast-message';
 import { theme } from '../../styles/Themes';
@@ -32,16 +33,21 @@ import {
   addToCart,
   decreaseCartItem,
   removeProductFromCart,
+  clearLocalCart,
 } from '../../redux/slices/cart.slice';
+import { placeOrder, clearCurrentOrder } from '../../redux/slices/order.slice';
 
 const { width, height } = Dimensions.get('window');
 
 const Cart = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const { cartItems, loading } = useSelector(state => state.cart);
+  const { loading: orderLoading } = useSelector(state => state.order);
 
   const [refreshing, setRefreshing] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(height * 0.03)).current;
 
@@ -106,25 +112,78 @@ const Cart = () => {
     setRefreshing(false);
   };
 
-  const shippingFee = 50;
+  const shippingFee = 5;
   const itemTotal = cartItems.reduce(
     (sum, item) => sum + (item.productId?.price || 0) * item.quantity,
     0,
   );
   const totalAmount = itemTotal + (cartItems.length > 0 ? shippingFee : 0);
 
-  const handleNavigateCheckOut = () => {
+  const handleCheckout = async () => {
     if (cartItems.length === 0) return;
-    navigation.navigate('CheckOut', {
-      cartItems: cartItems.map(item => ({
-        productId: item.productId._id,
-        title: item.productId.title,
-        quantity: item.quantity,
-        price: item.productId.price,
-      })),
-      totalAmount,
-      shippingFee,
-    });
+
+    setPaymentLoading(true);
+
+    try {
+      // Step 1: Place order and get client secret
+      const result = await dispatch(
+        placeOrder({
+          shippingCost: shippingFee,
+        }),
+      );
+
+      if (!placeOrder.fulfilled.match(result)) {
+        throw new Error(result.payload?.message || 'Failed to place order');
+      }
+
+      const { clientSecret } = result.payload;
+
+      // Step 2: Initialize Payment Sheet
+      const { error: initError } = await initPaymentSheet({
+        paymentIntentClientSecret: clientSecret,
+        merchantDisplayName: 'NiDrip',
+        style: 'automatic',
+      });
+
+      if (initError) {
+        throw new Error(initError.message);
+      }
+
+      // Step 3: Present Payment Sheet
+      const { error: paymentError } = await presentPaymentSheet();
+
+      if (paymentError) {
+        if (paymentError.code === 'Canceled') {
+          Toast.show({
+            type: 'error',
+            text1: 'Payment Cancelled',
+            text2: 'You cancelled the payment',
+          });
+        } else {
+          throw new Error(paymentError.message);
+        }
+      } else {
+        // Payment successful
+        Toast.show({
+          type: 'success',
+          text1: 'Payment Successful!',
+          text2: 'Your order has been placed',
+        });
+
+        // Clear cart and navigate to orders
+        dispatch(clearLocalCart());
+        dispatch(clearCurrentOrder());
+        navigation.navigate('Main');
+      }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Payment Failed',
+        text2: error.message || 'Something went wrong',
+      });
+    } finally {
+      setPaymentLoading(false);
+    }
   };
 
   return (
@@ -182,9 +241,10 @@ const Cart = () => {
             </View>
 
             <Button
-              title={`Checkout (${cartItems.length} items)`}
+              title={paymentLoading ? 'Processing...' : `Checkout (${cartItems.length} items)`}
               backgroundColor={theme.colors.primary}
-              onPress={handleNavigateCheckOut}
+              onPress={handleCheckout}
+              disabled={paymentLoading || orderLoading}
               style={styles.checkoutBtn}
             />
           </View>

@@ -75,14 +75,20 @@ const orderSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      enum: ["PAY_ON_DELIVERY"],
+      enum: ["PAY_ON_DELIVERY", "STRIPE"],
       default: "PAY_ON_DELIVERY",
     },
 
     paymentStatus: {
       type: String,
-      enum: ["PENDING", "PAID"],
+      enum: ["PENDING", "PAID", "FAILED", "CANCELLED"],
       default: "PENDING",
+    },
+
+    stripePaymentIntentId: {
+      type: String,
+      default: null,
+      index: true,
     },
   },
   {

@@ -10,6 +10,7 @@ import favoriteReducer from '../slices/favorite.slice';
 import reviewReducer from '../slices/review.slice';
 import ratingReducer from '../slices/rating.slice';
 import cartReducer from '../slices/cart.slice';
+import orderReducer from '../slices/order.slice';
 
 const persistConfig = {
   key: 'root',
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   reviews: reviewReducer,
   rating: ratingReducer,
   cart: cartReducer,
+  order: orderReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

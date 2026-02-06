@@ -24,6 +24,15 @@ securityMiddleware(app);
 // Core Middlewares
 // ==================================================
 app.use(cookieParser());
+
+// Stripe webhook needs raw body for signature verification
+// This must come BEFORE express.json()
+app.use(
+  "/api/payment/webhook",
+  express.raw({ type: "application/json" })
+);
+
+// Regular JSON parsing for all other routes
 app.use(express.json({ limit: "20kb" }));
 app.use(express.urlencoded({ extended: true, limit: "20kb" }));
 
@@ -65,6 +74,7 @@ const ratingRoute = require("./routes/rating-route/rating.route");
 const reviewRoute = require("./routes/review-route/review.route");
 const supportRoute = require("./routes/support-route/support.route");
 const orderRoute = require("./routes/order-route/order.route");
+const paymentRoute = require("./routes/payment-route/payment.route");
 
 // ==================================================
 // API Routes
@@ -79,6 +89,7 @@ app.use("/api/rating", ratingRoute);
 app.use("/api/review", reviewRoute);
 app.use("/api/support", supportRoute);
 app.use("/api/order", orderRoute);
+app.use("/api/payment", paymentRoute);
 
 // ==================================================
 // MongoDB Connection + Server Start
