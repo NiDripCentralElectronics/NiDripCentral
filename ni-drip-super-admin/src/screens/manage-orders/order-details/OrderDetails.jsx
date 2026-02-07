@@ -28,6 +28,8 @@ const OrderDetails = () => {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState("");
 
+  console.log("ORDER", order);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       const data = location.state?.order || null;
@@ -64,6 +66,11 @@ const OrderDetails = () => {
       year: "numeric",
       month: "long",
     });
+  };
+
+  const formatPhone = (phone) => {
+    if (!phone) return "Not Provided";
+    return `${phone.countryCode} ${phone.phoneNumber}`;
   };
 
   return (
@@ -144,7 +151,7 @@ const OrderDetails = () => {
               </div>
               <div className="info-row">
                 <small>Phone</small>
-                <p>{order.user.phone || "Not Provided"}</p>
+                <p>{formatPhone(order.user.phone)}</p>
               </div>
               <div className="info-row">
                 <small>Shipping Address</small>

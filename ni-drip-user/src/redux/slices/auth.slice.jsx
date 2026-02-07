@@ -103,14 +103,14 @@ export const loginUser = createAsyncThunk(
  * @param {Object} data - { email, role }
  */
 export const forgotPassword = createAsyncThunk(
-  'user/forgot-password',
-  async ({ email }, { rejectWithValue }) => {
+  'auth/forgot-password', // Changed prefix to 'auth' for consistency
+  async ({ email, role }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
         `${BACKEND_API_URL}/auth/forgot-password`,
         {
           email,
-          role: 'USER',
+          role, // Now dynamically received from the component
         },
       );
 
@@ -124,39 +124,6 @@ export const forgotPassword = createAsyncThunk(
 
       return rejectWithValue({
         message: backend?.message || error.message || 'Forgot password failed',
-        success: backend?.success ?? false,
-        status: error.response?.status || 0,
-      });
-    }
-  },
-);
-
-/**
- * Reset Password
- * @param {Object} data - { newPassword, token }
- */
-export const resetPassword = createAsyncThunk(
-  'user/reset-password',
-  async ({ newPassword, token }, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(
-        `${BACKEND_API_URL}/auth/reset-password/${token}`,
-        {
-          newPassword,
-          role: 'USER',
-        },
-      );
-
-      const { message, success } = response.data;
-
-      if (!success) throw new Error(message || 'Reset failed');
-
-      return { message, success: true };
-    } catch (error) {
-      const backend = error.response?.data;
-
-      return rejectWithValue({
-        message: backend?.message || error.message || 'Reset failed',
         success: backend?.success ?? false,
         status: error.response?.status || 0,
       });
@@ -319,26 +286,6 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(forgotPassword.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? action.error?.message;
-        state.message =
-          getMessageFromPayload(action.payload) ??
-          action.error?.message ??
-          null;
-      })
-
-      // resetPassword
-      .addCase(resetPassword.pending, state => {
-        state.loading = true;
-        state.error = null;
-        state.message = null;
-      })
-      .addCase(resetPassword.fulfilled, (state, action) => {
-        state.loading = false;
-        state.message = action.payload?.message ?? 'Password reset successful';
-        state.error = null;
-      })
-      .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? action.error?.message;
         state.message =

@@ -250,7 +250,10 @@ const Signin = () => {
               style={styles.actionContainer}
             >
               <View style={styles.forgotPassContainer}>
-                <TouchableOpacity activeOpacity={0.7}>
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  onPress={() => navigation.navigate('Forgot_Password')}
+                >
                   <Text style={styles.forgotPassText}>Forgot Password?</Text>
                 </TouchableOpacity>
               </View>

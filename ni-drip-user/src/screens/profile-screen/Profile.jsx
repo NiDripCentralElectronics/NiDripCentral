@@ -193,7 +193,11 @@ const Profile = () => {
         </View>
 
         <View style={styles.menuGroup}>
-          <ProfileCard title="My Orders" iconName="package-variant-closed" />
+          <ProfileCard
+            title="My Orders"
+            iconName="package-variant-closed"
+            onPressFunction={() => navigation.navigate('My_Orders')}
+          />
           <ProfileCard
             title="Favorites"
             iconName="heart-outline"

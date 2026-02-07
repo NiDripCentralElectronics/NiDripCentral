@@ -156,13 +156,15 @@ export const forgotPassword = createAsyncThunk(
 );
 
 /**
- * Reset password for Super Admin
+ * Dynamic Reset password for Super Admin and User
  */
 export const resetPassword = createAsyncThunk(
   "auth/reset-password",
-  async ({ newPassword, token }, { rejectWithValue }) => {
+  // Added 'role' to the destructured arguments below
+  async ({ newPassword, token, role }, { rejectWithValue }) => {
     try {
-      const payload = { newPassword, role: "SUPERADMIN" };
+      // Role is now dynamically passed from the component
+      const payload = { newPassword, role };
       const response = await axios.post(
         `${BACKEND_API_URL}/auth/reset-password/${token}`,
         payload,

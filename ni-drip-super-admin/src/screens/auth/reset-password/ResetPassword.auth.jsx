@@ -78,6 +78,12 @@ const ResetPassword = () => {
       return;
     }
 
+    // Logic to determine role dynamically
+    // Example: if the URL is /superadmin/reset-password, role is 'SUPERADMIN'
+    const currentRole = window.location.pathname.includes("superadmin")
+      ? "SUPERADMIN"
+      : "USER";
+
     const fields = { password };
     const errors = validateFields(fields);
 
@@ -91,8 +97,13 @@ const ResetPassword = () => {
     setLoading(true);
 
     try {
+      // Pass the 'role' into the dispatch call
       const resultAction = await dispatch(
-        resetPassword({ newPassword: password, token }),
+        resetPassword({
+          newPassword: password,
+          token,
+          role: currentRole,
+        }),
       );
 
       if (resetPassword.fulfilled.match(resultAction)) {
@@ -100,7 +111,11 @@ const ResetPassword = () => {
           resultAction.payload.message || "Password reset successfully!",
         );
         setPassword("");
-        setTimeout(() => navigate("/"), 2000);
+
+        // Navigate to the appropriate login page based on role
+        const redirectPath =
+          currentRole === "SUPERADMIN" ? "/" : "/";
+        setTimeout(() => navigate(redirectPath), 2000);
       } else if (resetPassword.rejected.match(resultAction)) {
         toast.error(
           resultAction.payload?.message ||

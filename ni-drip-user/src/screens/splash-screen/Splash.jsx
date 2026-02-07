@@ -29,7 +29,7 @@ const Splash = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    StatusBar.setBarStyle('light-content');    
+    StatusBar.setBarStyle('light-content');
     StatusBar.setBackgroundColor('transparent');
   }, []);
 

@@ -29,6 +29,7 @@ import OnBoarding from '../screens/onboarding-screen/OnBoarding';
 // Auth Screens
 import Signin from '../screens/auth/signin-screen/Signin';
 import Signup from '../screens/auth/signup-screen/Signup';
+import ForgotPassword from '../screens/auth/forgot-password-screen/ForgotPassword';
 
 // Main Application
 import BottomNavigator from '../navigation/bottom-navigator/BottomNavigator';
@@ -39,6 +40,7 @@ import EmailVerification from '../screens/profile-screen/sub-screens/EmailVerifi
 import About from '../screens/profile-screen/sub-screens/About';
 import Support from '../screens/profile-screen/sub-screens/Support';
 import Favorites from '../screens/profile-screen/sub-screens/Favorites';
+import MyOrders from '../screens/profile-screen/sub-screens/MyOrders';
 
 // Product Category
 import ProductCategory from '../screens/products/product-category/ProductCategory';
@@ -89,6 +91,10 @@ const AppNavigator = () => {
           {props => <Signup {...props} setStatusBarColor={setStatusBarColor} />}
         </Stack.Screen>
 
+        <Stack.Screen name="Forgot_Password">
+          {props => <ForgotPassword {...props} setStatusBarColor={setStatusBarColor} />}
+        </Stack.Screen>
+
         {/* --- MAIN APPLICATION ENTRY --- */}
         <Stack.Screen name="Main">
           {props => (
@@ -125,6 +131,12 @@ const AppNavigator = () => {
         <Stack.Screen name="Favorites">
           {props => (
             <Favorites {...props} setStatusBarColor={setStatusBarColor} />
+          )}
+        </Stack.Screen>
+
+        <Stack.Screen name="My_Orders">
+          {props => (
+            <MyOrders {...props} setStatusBarColor={setStatusBarColor} />
           )}
         </Stack.Screen>
 
