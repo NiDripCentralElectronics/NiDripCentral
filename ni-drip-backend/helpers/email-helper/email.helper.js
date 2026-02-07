@@ -158,6 +158,13 @@ function getFrontendUrl(role) {
         throw new Error("FRONTEND_URL is not defined");
       }
       return process.env.FRONTEND_URL.replace(/\/+$/, "");
+
+      case "USER":
+      if (!process.env.FRONTEND_URL) {
+        throw new Error("FRONTEND_URL is not defined");
+      }
+      return process.env.FRONTEND_URL.replace(/\/+$/, "");
+
     default:
       throw new Error(`No frontend URL configured for role: ${role}`);
   }
